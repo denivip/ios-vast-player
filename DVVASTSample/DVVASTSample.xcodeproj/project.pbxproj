@@ -15,6 +15,9 @@
 		E3361BB915D151D2002C1905 /* DVAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E3361BB815D151D2002C1905 /* DVAppDelegate.m */; };
 		E3361BBC15D151D2002C1905 /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E3361BBA15D151D2002C1905 /* MainStoryboard.storyboard */; };
 		E3361BBF15D151D2002C1905 /* DVViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E3361BBE15D151D2002C1905 /* DVViewController.m */; };
+		E3361BCD15D15E70002C1905 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3361BCC15D15E70002C1905 /* CoreMedia.framework */; };
+		E3361BD015D15F90002C1905 /* DVVideoMultipleAdPlaylist.m in Sources */ = {isa = PBXBuildFile; fileRef = E3361BCF15D15F90002C1905 /* DVVideoMultipleAdPlaylist.m */; };
+		E3361BD315D16040002C1905 /* DVVideoPlayBreak.m in Sources */ = {isa = PBXBuildFile; fileRef = E3361BD215D16040002C1905 /* DVVideoPlayBreak.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +34,11 @@
 		E3361BBB15D151D2002C1905 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
 		E3361BBD15D151D2002C1905 /* DVViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DVViewController.h; sourceTree = "<group>"; };
 		E3361BBE15D151D2002C1905 /* DVViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DVViewController.m; sourceTree = "<group>"; };
+		E3361BCC15D15E70002C1905 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		E3361BCE15D15F90002C1905 /* DVVideoMultipleAdPlaylist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVVideoMultipleAdPlaylist.h; sourceTree = "<group>"; };
+		E3361BCF15D15F90002C1905 /* DVVideoMultipleAdPlaylist.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DVVideoMultipleAdPlaylist.m; sourceTree = "<group>"; };
+		E3361BD115D16040002C1905 /* DVVideoPlayBreak.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVVideoPlayBreak.h; sourceTree = "<group>"; };
+		E3361BD215D16040002C1905 /* DVVideoPlayBreak.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DVVideoPlayBreak.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -38,6 +46,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3361BCD15D15E70002C1905 /* CoreMedia.framework in Frameworks */,
 				E3361BA915D151D2002C1905 /* UIKit.framework in Frameworks */,
 				E3361BAB15D151D2002C1905 /* Foundation.framework in Frameworks */,
 				E3361BAD15D151D2002C1905 /* CoreGraphics.framework in Frameworks */,
@@ -51,6 +60,7 @@
 			isa = PBXGroup;
 			children = (
 				E3361BAE15D151D2002C1905 /* DVVASTSample */,
+				E3361BC515D15A96002C1905 /* Classes */,
 				E3361BA715D151D2002C1905 /* Frameworks */,
 				E3361BA515D151D2002C1905 /* Products */,
 			);
@@ -67,6 +77,7 @@
 		E3361BA715D151D2002C1905 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E3361BCC15D15E70002C1905 /* CoreMedia.framework */,
 				E3361BA815D151D2002C1905 /* UIKit.framework */,
 				E3361BAA15D151D2002C1905 /* Foundation.framework */,
 				E3361BAC15D151D2002C1905 /* CoreGraphics.framework */,
@@ -96,6 +107,18 @@
 				E3361BB615D151D2002C1905 /* DVVASTSample-Prefix.pch */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		E3361BC515D15A96002C1905 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				E3361BCE15D15F90002C1905 /* DVVideoMultipleAdPlaylist.h */,
+				E3361BCF15D15F90002C1905 /* DVVideoMultipleAdPlaylist.m */,
+				E3361BD115D16040002C1905 /* DVVideoPlayBreak.h */,
+				E3361BD215D16040002C1905 /* DVVideoPlayBreak.m */,
+			);
+			name = Classes;
+			path = ../Classes;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -165,6 +188,8 @@
 				E3361BB515D151D2002C1905 /* main.m in Sources */,
 				E3361BB915D151D2002C1905 /* DVAppDelegate.m in Sources */,
 				E3361BBF15D151D2002C1905 /* DVViewController.m in Sources */,
+				E3361BD015D15F90002C1905 /* DVVideoMultipleAdPlaylist.m in Sources */,
+				E3361BD315D16040002C1905 /* DVVideoPlayBreak.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
