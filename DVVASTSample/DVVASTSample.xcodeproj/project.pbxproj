@@ -1,0 +1,287 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		E3361BA915D151D2002C1905 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3361BA815D151D2002C1905 /* UIKit.framework */; };
+		E3361BAB15D151D2002C1905 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3361BAA15D151D2002C1905 /* Foundation.framework */; };
+		E3361BAD15D151D2002C1905 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3361BAC15D151D2002C1905 /* CoreGraphics.framework */; };
+		E3361BB315D151D2002C1905 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E3361BB115D151D2002C1905 /* InfoPlist.strings */; };
+		E3361BB515D151D2002C1905 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E3361BB415D151D2002C1905 /* main.m */; };
+		E3361BB915D151D2002C1905 /* DVAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E3361BB815D151D2002C1905 /* DVAppDelegate.m */; };
+		E3361BBC15D151D2002C1905 /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E3361BBA15D151D2002C1905 /* MainStoryboard.storyboard */; };
+		E3361BBF15D151D2002C1905 /* DVViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E3361BBE15D151D2002C1905 /* DVViewController.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		E3361BA415D151D2002C1905 /* DVVASTSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DVVASTSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3361BA815D151D2002C1905 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		E3361BAA15D151D2002C1905 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		E3361BAC15D151D2002C1905 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		E3361BB015D151D2002C1905 /* DVVASTSample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "DVVASTSample-Info.plist"; sourceTree = "<group>"; };
+		E3361BB215D151D2002C1905 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		E3361BB415D151D2002C1905 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		E3361BB615D151D2002C1905 /* DVVASTSample-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DVVASTSample-Prefix.pch"; sourceTree = "<group>"; };
+		E3361BB715D151D2002C1905 /* DVAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DVAppDelegate.h; sourceTree = "<group>"; };
+		E3361BB815D151D2002C1905 /* DVAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DVAppDelegate.m; sourceTree = "<group>"; };
+		E3361BBB15D151D2002C1905 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
+		E3361BBD15D151D2002C1905 /* DVViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DVViewController.h; sourceTree = "<group>"; };
+		E3361BBE15D151D2002C1905 /* DVViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DVViewController.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		E3361BA115D151D2002C1905 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E3361BA915D151D2002C1905 /* UIKit.framework in Frameworks */,
+				E3361BAB15D151D2002C1905 /* Foundation.framework in Frameworks */,
+				E3361BAD15D151D2002C1905 /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		E3361B9915D151D2002C1905 = {
+			isa = PBXGroup;
+			children = (
+				E3361BAE15D151D2002C1905 /* DVVASTSample */,
+				E3361BA715D151D2002C1905 /* Frameworks */,
+				E3361BA515D151D2002C1905 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		E3361BA515D151D2002C1905 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E3361BA415D151D2002C1905 /* DVVASTSample.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E3361BA715D151D2002C1905 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E3361BA815D151D2002C1905 /* UIKit.framework */,
+				E3361BAA15D151D2002C1905 /* Foundation.framework */,
+				E3361BAC15D151D2002C1905 /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E3361BAE15D151D2002C1905 /* DVVASTSample */ = {
+			isa = PBXGroup;
+			children = (
+				E3361BB715D151D2002C1905 /* DVAppDelegate.h */,
+				E3361BB815D151D2002C1905 /* DVAppDelegate.m */,
+				E3361BBA15D151D2002C1905 /* MainStoryboard.storyboard */,
+				E3361BBD15D151D2002C1905 /* DVViewController.h */,
+				E3361BBE15D151D2002C1905 /* DVViewController.m */,
+				E3361BAF15D151D2002C1905 /* Supporting Files */,
+			);
+			path = DVVASTSample;
+			sourceTree = "<group>";
+		};
+		E3361BAF15D151D2002C1905 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				E3361BB015D151D2002C1905 /* DVVASTSample-Info.plist */,
+				E3361BB115D151D2002C1905 /* InfoPlist.strings */,
+				E3361BB415D151D2002C1905 /* main.m */,
+				E3361BB615D151D2002C1905 /* DVVASTSample-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		E3361BA315D151D2002C1905 /* DVVASTSample */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E3361BC215D151D2002C1905 /* Build configuration list for PBXNativeTarget "DVVASTSample" */;
+			buildPhases = (
+				E3361BA015D151D2002C1905 /* Sources */,
+				E3361BA115D151D2002C1905 /* Frameworks */,
+				E3361BA215D151D2002C1905 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DVVASTSample;
+			productName = DVVASTSample;
+			productReference = E3361BA415D151D2002C1905 /* DVVASTSample.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E3361B9B15D151D2002C1905 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = DV;
+				LastUpgradeCheck = 0440;
+				ORGANIZATIONNAME = "DENIVIP Media";
+			};
+			buildConfigurationList = E3361B9E15D151D2002C1905 /* Build configuration list for PBXProject "DVVASTSample" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = E3361B9915D151D2002C1905;
+			productRefGroup = E3361BA515D151D2002C1905 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E3361BA315D151D2002C1905 /* DVVASTSample */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		E3361BA215D151D2002C1905 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E3361BB315D151D2002C1905 /* InfoPlist.strings in Resources */,
+				E3361BBC15D151D2002C1905 /* MainStoryboard.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		E3361BA015D151D2002C1905 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E3361BB515D151D2002C1905 /* main.m in Sources */,
+				E3361BB915D151D2002C1905 /* DVAppDelegate.m in Sources */,
+				E3361BBF15D151D2002C1905 /* DVViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		E3361BB115D151D2002C1905 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E3361BB215D151D2002C1905 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		E3361BBA15D151D2002C1905 /* MainStoryboard.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E3361BBB15D151D2002C1905 /* en */,
+			);
+			name = MainStoryboard.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		E3361BC015D151D2002C1905 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		E3361BC115D151D2002C1905 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		E3361BC315D151D2002C1905 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "DVVASTSample/DVVASTSample-Prefix.pch";
+				INFOPLIST_FILE = "DVVASTSample/DVVASTSample-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		E3361BC415D151D2002C1905 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "DVVASTSample/DVVASTSample-Prefix.pch";
+				INFOPLIST_FILE = "DVVASTSample/DVVASTSample-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		E3361B9E15D151D2002C1905 /* Build configuration list for PBXProject "DVVASTSample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E3361BC015D151D2002C1905 /* Debug */,
+				E3361BC115D151D2002C1905 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E3361BC215D151D2002C1905 /* Build configuration list for PBXNativeTarget "DVVASTSample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E3361BC315D151D2002C1905 /* Debug */,
+				E3361BC415D151D2002C1905 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = E3361B9B15D151D2002C1905 /* Project object */;
+}
