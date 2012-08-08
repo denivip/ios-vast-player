@@ -7,10 +7,11 @@
 //
 
 #import "DVVideoAdServingTemplate.h"
+#import "DDXML.h"
 
 
 @interface DVVideoAdServingTemplate (Parsing)
 
-- (id)initWithData:(NSData *)data error:(NSError **)error;
+- (id)initWithXMLDocument:(DDXMLDocument *)document error:(NSError **)error;
 
 @end

@@ -22,7 +22,13 @@
 		E3361BDC15D169BD002C1905 /* DVVideoAd.m in Sources */ = {isa = PBXBuildFile; fileRef = E3361BDB15D169BD002C1905 /* DVVideoAd.m */; };
 		E3361BDF15D16A5A002C1905 /* DVInlineVideoAd.m in Sources */ = {isa = PBXBuildFile; fileRef = E3361BDE15D16A5A002C1905 /* DVInlineVideoAd.m */; };
 		E3361BE215D16A68002C1905 /* DVWrapperVideoAd.m in Sources */ = {isa = PBXBuildFile; fileRef = E3361BE115D16A67002C1905 /* DVWrapperVideoAd.m */; };
+		E3361BF415D17079002C1905 /* DDXMLElementAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = E3361BE715D17079002C1905 /* DDXMLElementAdditions.m */; };
+		E3361BF515D17079002C1905 /* NSString+DDXML.m in Sources */ = {isa = PBXBuildFile; fileRef = E3361BEA15D17079002C1905 /* NSString+DDXML.m */; };
+		E3361BF615D17079002C1905 /* DDXMLDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = E3361BED15D17079002C1905 /* DDXMLDocument.m */; };
+		E3361BF715D17079002C1905 /* DDXMLElement.m in Sources */ = {isa = PBXBuildFile; fileRef = E3361BEF15D17079002C1905 /* DDXMLElement.m */; };
+		E3361BF815D17079002C1905 /* DDXMLNode.m in Sources */ = {isa = PBXBuildFile; fileRef = E3361BF115D17079002C1905 /* DDXMLNode.m */; };
 		E3361BFB15D171BE002C1905 /* DVVideoAdServingTemplate+Parsing.m in Sources */ = {isa = PBXBuildFile; fileRef = E3361BFA15D171BE002C1905 /* DVVideoAdServingTemplate+Parsing.m */; };
+		E38381D415D2688C0056C4CE /* DVTimeIntervalParser.m in Sources */ = {isa = PBXBuildFile; fileRef = E38381D315D2688C0056C4CE /* DVTimeIntervalParser.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,8 +58,22 @@
 		E3361BDE15D16A5A002C1905 /* DVInlineVideoAd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DVInlineVideoAd.m; sourceTree = "<group>"; };
 		E3361BE015D16A67002C1905 /* DVWrapperVideoAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVWrapperVideoAd.h; sourceTree = "<group>"; };
 		E3361BE115D16A67002C1905 /* DVWrapperVideoAd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DVWrapperVideoAd.m; sourceTree = "<group>"; };
+		E3361BE615D17079002C1905 /* DDXMLElementAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDXMLElementAdditions.h; sourceTree = "<group>"; };
+		E3361BE715D17079002C1905 /* DDXMLElementAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDXMLElementAdditions.m; sourceTree = "<group>"; };
+		E3361BE915D17079002C1905 /* NSString+DDXML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+DDXML.h"; sourceTree = "<group>"; };
+		E3361BEA15D17079002C1905 /* NSString+DDXML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+DDXML.m"; sourceTree = "<group>"; };
+		E3361BEB15D17079002C1905 /* DDXML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDXML.h; sourceTree = "<group>"; };
+		E3361BEC15D17079002C1905 /* DDXMLDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDXMLDocument.h; sourceTree = "<group>"; };
+		E3361BED15D17079002C1905 /* DDXMLDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDXMLDocument.m; sourceTree = "<group>"; };
+		E3361BEE15D17079002C1905 /* DDXMLElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDXMLElement.h; sourceTree = "<group>"; };
+		E3361BEF15D17079002C1905 /* DDXMLElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDXMLElement.m; sourceTree = "<group>"; };
+		E3361BF015D17079002C1905 /* DDXMLNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDXMLNode.h; sourceTree = "<group>"; };
+		E3361BF115D17079002C1905 /* DDXMLNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDXMLNode.m; sourceTree = "<group>"; };
+		E3361BF315D17079002C1905 /* DDXMLPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDXMLPrivate.h; sourceTree = "<group>"; };
 		E3361BF915D171BE002C1905 /* DVVideoAdServingTemplate+Parsing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DVVideoAdServingTemplate+Parsing.h"; sourceTree = "<group>"; };
 		E3361BFA15D171BE002C1905 /* DVVideoAdServingTemplate+Parsing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DVVideoAdServingTemplate+Parsing.m"; sourceTree = "<group>"; };
+		E38381D215D2688C0056C4CE /* DVTimeIntervalParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVTimeIntervalParser.h; sourceTree = "<group>"; };
+		E38381D315D2688C0056C4CE /* DVTimeIntervalParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DVTimeIntervalParser.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,6 +96,7 @@
 			children = (
 				E3361BAE15D151D2002C1905 /* DVVASTSample */,
 				E3361BC515D15A96002C1905 /* Classes */,
+				E3361BE315D1706B002C1905 /* Vendor */,
 				E3361BA715D151D2002C1905 /* Frameworks */,
 				E3361BA515D151D2002C1905 /* Products */,
 			);
@@ -141,9 +162,63 @@
 				E3361BE115D16A67002C1905 /* DVWrapperVideoAd.m */,
 				E3361BF915D171BE002C1905 /* DVVideoAdServingTemplate+Parsing.h */,
 				E3361BFA15D171BE002C1905 /* DVVideoAdServingTemplate+Parsing.m */,
+				E38381D215D2688C0056C4CE /* DVTimeIntervalParser.h */,
+				E38381D315D2688C0056C4CE /* DVTimeIntervalParser.m */,
 			);
 			name = Classes;
 			path = ../Classes;
+			sourceTree = "<group>";
+		};
+		E3361BE315D1706B002C1905 /* Vendor */ = {
+			isa = PBXGroup;
+			children = (
+				E3361BE415D17079002C1905 /* KissXML */,
+			);
+			name = Vendor;
+			sourceTree = "<group>";
+		};
+		E3361BE415D17079002C1905 /* KissXML */ = {
+			isa = PBXGroup;
+			children = (
+				E3361BE515D17079002C1905 /* Additions */,
+				E3361BE815D17079002C1905 /* Categories */,
+				E3361BEB15D17079002C1905 /* DDXML.h */,
+				E3361BEC15D17079002C1905 /* DDXMLDocument.h */,
+				E3361BED15D17079002C1905 /* DDXMLDocument.m */,
+				E3361BEE15D17079002C1905 /* DDXMLElement.h */,
+				E3361BEF15D17079002C1905 /* DDXMLElement.m */,
+				E3361BF015D17079002C1905 /* DDXMLNode.h */,
+				E3361BF115D17079002C1905 /* DDXMLNode.m */,
+				E3361BF215D17079002C1905 /* Private */,
+			);
+			name = KissXML;
+			path = ../KissXML/KissXML;
+			sourceTree = "<group>";
+		};
+		E3361BE515D17079002C1905 /* Additions */ = {
+			isa = PBXGroup;
+			children = (
+				E3361BE615D17079002C1905 /* DDXMLElementAdditions.h */,
+				E3361BE715D17079002C1905 /* DDXMLElementAdditions.m */,
+			);
+			path = Additions;
+			sourceTree = "<group>";
+		};
+		E3361BE815D17079002C1905 /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				E3361BE915D17079002C1905 /* NSString+DDXML.h */,
+				E3361BEA15D17079002C1905 /* NSString+DDXML.m */,
+			);
+			path = Categories;
+			sourceTree = "<group>";
+		};
+		E3361BF215D17079002C1905 /* Private */ = {
+			isa = PBXGroup;
+			children = (
+				E3361BF315D17079002C1905 /* DDXMLPrivate.h */,
+			);
+			path = Private;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -219,7 +294,13 @@
 				E3361BDC15D169BD002C1905 /* DVVideoAd.m in Sources */,
 				E3361BDF15D16A5A002C1905 /* DVInlineVideoAd.m in Sources */,
 				E3361BE215D16A68002C1905 /* DVWrapperVideoAd.m in Sources */,
+				E3361BF415D17079002C1905 /* DDXMLElementAdditions.m in Sources */,
+				E3361BF515D17079002C1905 /* NSString+DDXML.m in Sources */,
+				E3361BF615D17079002C1905 /* DDXMLDocument.m in Sources */,
+				E3361BF715D17079002C1905 /* DDXMLElement.m in Sources */,
+				E3361BF815D17079002C1905 /* DDXMLNode.m in Sources */,
 				E3361BFB15D171BE002C1905 /* DVVideoAdServingTemplate+Parsing.m in Sources */,
+				E38381D415D2688C0056C4CE /* DVTimeIntervalParser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -267,7 +348,12 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					/usr/include/libxml2,
+					"$(SRCROOT)/KissXML",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				OTHER_LDFLAGS = "-lxml2";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -287,8 +373,13 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					/usr/include/libxml2,
+					"$(SRCROOT)/KissXML",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				OTHER_LDFLAGS = "-lxml2";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};

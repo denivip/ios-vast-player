@@ -9,6 +9,8 @@
 #import "DVVideoAdServingTemplate.h"
 
 
+NSString *const DVVideoAdServingTemplateErrorDomain = @"DVVideoAdServingTemplateErrorDomain";
+
 @implementation DVVideoAdServingTemplate
 
 @synthesize ads = _ads;
