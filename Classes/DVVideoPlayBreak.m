@@ -50,4 +50,29 @@
     return obj;
 }
 
+- (NSString *)description
+{
+    NSString *defaultDescription = [super description];
+    
+    NSString *time = nil;
+    switch (self.timeOffsetType) {
+        case DVVideoPlayBreakTimeOffsetStart:
+            time = @"pre-roll";
+            break;
+        case DVVideoPlayBreakTimeOffsetEnd:
+            time = @"post-roll";
+            break;
+        case DVVideoPlayBreakTimeOffsetFromStart:
+            time = [NSString stringWithFormat:@"@%@", CMTimeCopyDescription(nil, self.timeFromStart)];
+            break;
+
+        case DVVideoPlayBreakTimeOffsetPercentage:
+        case DVVideoPlayBreakTimeOffsetPositional:
+            NSAssert(NO, @"Not supported");
+            break;
+    }
+    
+    return [NSString stringWithFormat:@"%@ %@ %@", defaultDescription, time, self.adServingTemplateURL];
+}
+
 @end

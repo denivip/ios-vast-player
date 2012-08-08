@@ -15,9 +15,12 @@
 static void *DVViewControllerCurrentPlayerItemObservationContext = &DVViewControllerCurrentPlayerItemObservationContext;
 static void *DVViewControllerPlayerItemStatusObservationContext = &DVViewControllerPlayerItemStatusObservationContext;
 
-#define OPENX_AD_TAG_WITH_ZONE(ZONE_ID) ([NSURL URLWithString:@"http://openx.denivip.ru/delivery/fc.php?block=0&script=bannerTypeHtml:vastInlineBannerTypeHtml:vastInlineHtml&format=vast&nz=1&charset=UTF-8&r=0.1978856846690178&zones=z=ZONE_ID"])
+#define OPENX_AD_TAG_WITH_ZONE(ZONE_ID) ([NSURL URLWithString:[NSString stringWithFormat:@"http://openx.denivip.ru/delivery/fc.php?block=0&script=bannerTypeHtml:vastInlineBannerTypeHtml:vastInlineHtml&format=vast&nz=1&charset=UTF-8&r=0.1978856846690178&zones=z%%3D%u", (ZONE_ID)]])
 
 @interface DVViewController ()
+
+@property (nonatomic, strong) id periodicTimeObserver;
+@property (nonatomic, strong) id playBreaksTimeObserver;
 
 @end
 
@@ -30,6 +33,7 @@ static void *DVViewControllerPlayerItemStatusObservationContext = &DVViewControl
 @synthesize contentURL = _contentURL;
 @synthesize adPlaylist = _adPlaylist;
 @synthesize player = _player;
+@synthesize periodicTimeObserver = _periodicTimeObserver;
 
 #pragma mark - Player
 
@@ -37,11 +41,26 @@ static void *DVViewControllerPlayerItemStatusObservationContext = &DVViewControl
 {
     AVPlayerItem *playerItem = [AVPlayerItem playerItemWithURL:contentURL];
 
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(contentPlayerItemDidReachEnd:)
+                                                 name:AVPlayerItemDidPlayToEndTimeNotification
+                                               object:playerItem];
     [playerItem addObserver:self
                  forKeyPath:@"status"
                     options:NSKeyValueObservingOptionInitial|NSKeyValueObservingOptionNew
                     context:DVViewControllerPlayerItemStatusObservationContext];
     [self.player replaceCurrentItemWithPlayerItem:playerItem];
+}
+
+- (void)contentPlayerItemDidReachEnd:(NSNotification *)notification
+{
+    // AVPlayerItem *playerItem = [notification object];
+    
+    // post-roll
+    
+    NSArray *playBreaks = [self.adPlaylist postRollPlayBreaks];
+    NSLog(@"%@", playBreaks);
+    
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -52,6 +71,12 @@ static void *DVViewControllerPlayerItemStatusObservationContext = &DVViewControl
     else if (context == DVViewControllerPlayerItemStatusObservationContext) {
         AVPlayerItemStatus status = [[change objectForKey:NSKeyValueChangeNewKey] integerValue];
         if (status == AVPlayerItemStatusReadyToPlay) {
+            
+            // pre-roll
+            
+            NSArray *playBreaks = [self.adPlaylist preRollPlayBreaks];
+            NSLog(@"%@", playBreaks);
+            
             [self.player play];
         }
     }
@@ -93,15 +118,10 @@ static void *DVViewControllerPlayerItemStatusObservationContext = &DVViewControl
                      options:NSKeyValueObservingOptionInitial|NSKeyValueObservingOptionNew
                      context:DVViewControllerCurrentPlayerItemObservationContext];
 
-    [self.player addPeriodicTimeObserverForInterval:CMTimeMake(1, 10) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
+    self.periodicTimeObserver = [self.player addPeriodicTimeObserverForInterval:CMTimeMake(1, 10) queue:NULL usingBlock:^(CMTime time) {
         DVTimeIntervalFormatter *formatter = [[DVTimeIntervalFormatter alloc] init];
         self.currentTimeLabel.text = [formatter stringWithTimeInterval:CMTimeGetSeconds(time)];
     }];
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
     
     self.contentURL = [NSURL URLWithString:@"http://denivip.ru/sites/default/files/ios-iab/content.mp4"];
     self.adPlaylist = [[DVVideoMultipleAdPlaylist alloc] init];
@@ -111,6 +131,20 @@ static void *DVViewControllerPlayerItemStatusObservationContext = &DVViewControl
                                   [DVVideoPlayBreak playBreakAfterEndWithAdTemplateURL:OPENX_AD_TAG_WITH_ZONE(20)],
                                   nil];
     
+    self.playBreaksTimeObserver = [self.player addBoundaryTimeObserverForTimes:[self.adPlaylist midRollTimes] queue:NULL usingBlock:^{
+        
+        CMTime currentTime = self.player.currentTime;
+        NSArray *playBreaks = [self.adPlaylist midRollPlayBreaksWithTime:currentTime approximate:YES];
+        NSCAssert([playBreaks count], @"No play breaks found for boundary time");
+        NSLog(@"%@", playBreaks);
+        
+    }];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
     [self startPlaybackWithContentURL:self.contentURL adPlaylist:self.adPlaylist];
 }
 
@@ -119,6 +153,12 @@ static void *DVViewControllerPlayerItemStatusObservationContext = &DVViewControl
     [self setPlayerView:nil];
     [self setCurrentTimeLabel:nil];
     [self setCurrentItemTitleLabel:nil];
+    
+    [self.player removeTimeObserver:self.periodicTimeObserver];
+    self.periodicTimeObserver = nil;
+    
+    [self.player removeTimeObserver:self.playBreaksTimeObserver];
+    self.playBreaksTimeObserver = nil;
     
     [self.player removeObserver:self forKeyPath:nil];
     self.player = nil;
