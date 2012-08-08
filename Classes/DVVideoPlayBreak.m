@@ -19,4 +19,35 @@
 @synthesize adServingTemplateURL = _adServingTemplateURL;
 @synthesize identifier = _identifier;
 
++ (id)playBreakBeforeStartWithAdTemplateURL:(NSURL *)adTemplateURL
+{
+    DVVideoPlayBreak *obj = [[[self class] alloc] init];
+    if (obj) {
+        obj.timeOffsetType = DVVideoPlayBreakTimeOffsetStart;
+        obj.adServingTemplateURL = adTemplateURL;
+    }
+    return obj;
+}
+
++ (id)playBreakAfterEndWithAdTemplateURL:(NSURL *)adTemplateURL
+{
+    DVVideoPlayBreak *obj = [[[self class] alloc] init];
+    if (obj) {
+        obj.timeOffsetType = DVVideoPlayBreakTimeOffsetEnd;
+        obj.adServingTemplateURL = adTemplateURL;
+    }
+    return obj;
+}
+
++ (id)playBreakAtTimeFromStart:(CMTime)timeFromStart withAdTemplateURL:(NSURL *)adTemplateURL
+{
+    DVVideoPlayBreak *obj = [[[self class] alloc] init];
+    if (obj) {
+        obj.timeOffsetType = DVVideoPlayBreakTimeOffsetFromStart;
+        obj.timeFromStart = timeFromStart;
+        obj.adServingTemplateURL = adTemplateURL;
+    }
+    return obj;
+}
+
 @end

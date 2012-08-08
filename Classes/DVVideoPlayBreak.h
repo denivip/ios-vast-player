@@ -44,4 +44,8 @@ typedef enum {
 @property (nonatomic, copy) NSString *identifier;
 @property (nonatomic, copy) NSURL *adServingTemplateURL;
 
++ (id)playBreakBeforeStartWithAdTemplateURL:(NSURL *)adTemplateURL;
++ (id)playBreakAfterEndWithAdTemplateURL:(NSURL *)adTemplateURL;
++ (id)playBreakAtTimeFromStart:(CMTime)timeFromStart withAdTemplateURL:(NSURL *)adTemplateURL;
+
 @end
