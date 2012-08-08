@@ -60,6 +60,25 @@ static void *DVViewControllerPlayerItemStatusObservationContext = &DVViewControl
     }
 }
 
+#pragma mark - Controls
+
+- (IBAction)rewindButton:(id)sender
+{
+    [self.player seekToTime:CMTimeSubtract(self.player.currentTime, CMTimeMake(60, 1))];
+}
+
+- (IBAction)fastForwardButton:(id)sender
+{
+    [self.player seekToTime:CMTimeAdd(self.player.currentTime, CMTimeMake(60, 1))];
+}
+
+- (IBAction)endButton:(id)sender
+{
+    NSArray *seekableTimeRanges = self.player.currentItem.seekableTimeRanges;
+    CMTimeRange seekableRange = [[seekableTimeRanges objectAtIndex:0] CMTimeRangeValue];
+    [self.player seekToTime:CMTimeSubtract(CMTimeAdd(seekableRange.start, seekableRange.duration), CMTimeMake(10, 1))];
+}
+
 #pragma mark - View Controller
 
 - (void)viewDidLoad
