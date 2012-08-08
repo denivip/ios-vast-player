@@ -9,8 +9,9 @@
 #import <Foundation/Foundation.h>
 
 
-@interface DVTimeIntervalParser : NSObject
+@interface DVTimeIntervalFormatter : NSObject
 
 - (NSTimeInterval)timeIntervalWithString:(NSString *)string;
+- (NSString *)stringWithTimeInterval:(NSTimeInterval)timeInterval;
 
 @end

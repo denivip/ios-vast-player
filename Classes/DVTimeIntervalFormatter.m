@@ -6,10 +6,10 @@
 //  Copyright (c) 2012 DENIVIP Media. All rights reserved.
 //
 
-#import "DVTimeIntervalParser.h"
+#import "DVTimeIntervalFormatter.h"
 
 
-@implementation DVTimeIntervalParser
+@implementation DVTimeIntervalFormatter
 
 - (NSTimeInterval)timeIntervalWithString:(NSString *)string
 {
@@ -45,6 +45,14 @@
     }
     
     return hours * 60 * 60 + minutes * 60 + seconds + (CGFloat)milliseconds / 1000.f;
+}
+
+- (NSString *)stringWithTimeInterval:(NSTimeInterval)totalSeconds
+{
+    NSInteger hours = totalSeconds / (60 * 60);
+    NSInteger minutes = (totalSeconds - hours * 60 * 60) / 60;
+    CGFloat seconds = MAX(0, (totalSeconds - hours * 60 * 60 - minutes * 60));
+    return [NSString stringWithFormat:@"%02i:%02i:%06.3f", hours, minutes, seconds];
 }
 
 @end

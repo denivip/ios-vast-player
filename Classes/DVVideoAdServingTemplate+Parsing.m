@@ -10,7 +10,7 @@
 #import "DVVideoAd.h"
 #import "DVInlineVideoAd.h"
 #import "DVWrapperVideoAd.h"
-#import "DVTimeIntervalParser.h"
+#import "DVTimeIntervalFormatter.h"
 
 
 @implementation DVVideoAdServingTemplate (Parsing)
@@ -27,7 +27,7 @@
     DDXMLElement *videoElement = [[element elementsForName:@"Video"] objectAtIndex:0];
     
     NSString *durationString = [[[videoElement elementsForName:@"Duration"] objectAtIndex:0] stringValue];
-    DVTimeIntervalParser *timeIntervalParser = [[DVTimeIntervalParser alloc] init];
+    DVTimeIntervalFormatter *timeIntervalParser = [[DVTimeIntervalFormatter alloc] init];
     videoAd.duration = [timeIntervalParser timeIntervalWithString:durationString];
     
     NSString *mediaFileString = [[[[[[[videoElement elementsForName:@"MediaFiles"] objectAtIndex:0]

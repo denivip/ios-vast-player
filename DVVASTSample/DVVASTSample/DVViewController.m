@@ -9,6 +9,7 @@
 #import "DVViewController.h"
 #import <QuartzCore/QuartzCore.h>
 #import "DVVideoPlayBreak.h"
+#import "DVTimeIntervalFormatter.h"
 
 
 static void *DVViewControllerCurrentPlayerItemObservationContext = &DVViewControllerCurrentPlayerItemObservationContext;
@@ -74,8 +75,8 @@ static void *DVViewControllerPlayerItemStatusObservationContext = &DVViewControl
                      context:DVViewControllerCurrentPlayerItemObservationContext];
 
     [self.player addPeriodicTimeObserverForInterval:CMTimeMake(1, 10) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
-        NSTimeInterval seconds = CMTimeGetSeconds(time);
-        self.currentTimeLabel.text = [NSString stringWithFormat:@"%.3f", seconds];
+        DVTimeIntervalFormatter *formatter = [[DVTimeIntervalFormatter alloc] init];
+        self.currentTimeLabel.text = [formatter stringWithTimeInterval:CMTimeGetSeconds(time)];
     }];
 }
 
@@ -87,7 +88,7 @@ static void *DVViewControllerPlayerItemStatusObservationContext = &DVViewControl
     self.adPlaylist = [[DVVideoMultipleAdPlaylist alloc] init];
     self.adPlaylist.playBreaks = [NSArray arrayWithObjects:
                                   [DVVideoPlayBreak playBreakBeforeStartWithAdTemplateURL:OPENX_AD_TAG_WITH_ZONE(18)],
-                                  [DVVideoPlayBreak playBreakAtTimeFromStart:CMTimeMakeWithSeconds(10.f, 1000000) withAdTemplateURL:OPENX_AD_TAG_WITH_ZONE(19)],
+                                  [DVVideoPlayBreak playBreakAtTimeFromStart:CMTimeMake(10, 1) withAdTemplateURL:OPENX_AD_TAG_WITH_ZONE(19)],
                                   [DVVideoPlayBreak playBreakAfterEndWithAdTemplateURL:OPENX_AD_TAG_WITH_ZONE(20)],
                                   nil];
     
