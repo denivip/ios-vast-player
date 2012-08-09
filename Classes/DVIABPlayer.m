@@ -32,6 +32,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 @property (nonatomic, strong) DVVideoPlayBreak *currentPlayBreak;
 @property (nonatomic, strong) NSMutableData *adRequestData;
 @property (nonatomic, strong) NSMutableArray *adsQueue;
+@property (nonatomic, strong) AVPlayerItem *currentInlineAdPlayerItem;
 @property (nonatomic) BOOL contentPlayerItemDidReachEnd;
 @property (nonatomic) BOOL didFinishPlayBreakRecently;
 
@@ -122,7 +123,8 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
                 break;
                 
             case AVPlayerItemStatusFailed:
-                [self finishCurrentInlineAd:self.currentItem];
+                NSLog(@"AVPlayerItemStatusFailed %@", self.currentInlineAdPlayerItem.error);
+                [self finishCurrentInlineAd:self.currentInlineAdPlayerItem];
                 break;
 
             case AVPlayerItemStatusUnknown:
@@ -131,7 +133,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
     }
     else if (context == DVIABPlayerCurrentItemObservationContext) {
         AVPlayerItem *currentItem = [change objectForKey:NSKeyValueChangeNewKey];
-        NSLog(@"DVIABPlayerCurrentItemObservationContext %@ %i", currentItem, currentItem.status);
+        NSLog(@"DVIABPlayerCurrentItemObservationContext %@", currentItem);
 
         if (currentItem == self.contentPlayerItem &&
             currentItem.status == AVPlayerItemStatusReadyToPlay &&
@@ -311,6 +313,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
                     options:NSKeyValueObservingOptionInitial|NSKeyValueObservingOptionNew
                     context:DVIABPlayerInlineAdPlayerItemStatusObservationContext];
     
+    self.currentInlineAdPlayerItem = playerItem;
     [self replaceCurrentItemWithPlayerItem:playerItem];
 }
 
