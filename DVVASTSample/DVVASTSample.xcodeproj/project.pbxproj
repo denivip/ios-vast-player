@@ -16,8 +16,6 @@
 		E3361BBC15D151D2002C1905 /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E3361BBA15D151D2002C1905 /* MainStoryboard.storyboard */; };
 		E3361BBF15D151D2002C1905 /* DVViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E3361BBE15D151D2002C1905 /* DVViewController.m */; };
 		E3361BC815D15AD3002C1905 /* DVIABPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = E3361BC715D15AD3002C1905 /* DVIABPlayer.m */; };
-		E3361BCA15D15B06002C1905 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3361BC915D15B06002C1905 /* AVFoundation.framework */; };
-		E3361BCD15D15E70002C1905 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3361BCC15D15E70002C1905 /* CoreMedia.framework */; };
 		E3361BD015D15F90002C1905 /* DVVideoMultipleAdPlaylist.m in Sources */ = {isa = PBXBuildFile; fileRef = E3361BCF15D15F90002C1905 /* DVVideoMultipleAdPlaylist.m */; };
 		E3361BD315D16040002C1905 /* DVVideoPlayBreak.m in Sources */ = {isa = PBXBuildFile; fileRef = E3361BD215D16040002C1905 /* DVVideoPlayBreak.m */; };
 		E3361BD615D162B5002C1905 /* DVVideoAdServingTemplate.m in Sources */ = {isa = PBXBuildFile; fileRef = E3361BD515D162B5002C1905 /* DVVideoAdServingTemplate.m */; };
@@ -32,9 +30,10 @@
 		E3361BFB15D171BE002C1905 /* DVVideoAdServingTemplate+Parsing.m in Sources */ = {isa = PBXBuildFile; fileRef = E3361BFA15D171BE002C1905 /* DVVideoAdServingTemplate+Parsing.m */; };
 		E38381D415D2688C0056C4CE /* DVTimeIntervalFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = E38381D315D2688C0056C4CE /* DVTimeIntervalFormatter.m */; };
 		E38381D715D26CC40056C4CE /* DVPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = E38381D615D26CC40056C4CE /* DVPlayerView.m */; };
-		E38381D915D270020056C4CE /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E38381D815D270020056C4CE /* QuartzCore.framework */; };
 		E38381DB15D290350056C4CE /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = E38381DA15D290340056C4CE /* Icon.png */; };
 		E38381DD15D2903B0056C4CE /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E38381DC15D2903B0056C4CE /* Icon@2x.png */; };
+		E38381DE15D3EAB20056C4CE /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3361BCC15D15E70002C1905 /* CoreMedia.framework */; };
+		E38381DF15D3EAB70056C4CE /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3361BC915D15B06002C1905 /* AVFoundation.framework */; };
 		E38381E115D3EFBF0056C4CE /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = E38381E015D3EFBF0056C4CE /* Icon-72.png */; };
 		E38381E315D3EFC30056C4CE /* Icon-72@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E38381E215D3EFC30056C4CE /* Icon-72@2x.png */; };
 /* End PBXBuildFile section */
@@ -99,9 +98,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E38381D915D270020056C4CE /* QuartzCore.framework in Frameworks */,
-				E3361BCD15D15E70002C1905 /* CoreMedia.framework in Frameworks */,
-				E3361BCA15D15B06002C1905 /* AVFoundation.framework in Frameworks */,
+				E38381DF15D3EAB70056C4CE /* AVFoundation.framework in Frameworks */,
+				E38381DE15D3EAB20056C4CE /* CoreMedia.framework in Frameworks */,
 				E3361BA915D151D2002C1905 /* UIKit.framework in Frameworks */,
 				E3361BAB15D151D2002C1905 /* Foundation.framework in Frameworks */,
 				E3361BAD15D151D2002C1905 /* CoreGraphics.framework in Frameworks */,

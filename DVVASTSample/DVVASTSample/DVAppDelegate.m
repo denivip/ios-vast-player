@@ -7,12 +7,16 @@
 //
 
 #import "DVAppDelegate.h"
+#import <AVFoundation/AVFoundation.h>
+
 
 @implementation DVAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    // Override point for customization after application launch.
+    AVAudioSession *audioSession = [AVAudioSession sharedInstance]; // to implicitly initialize
+    [audioSession setCategory:AVAudioSessionCategoryPlayback error:nil];
+    
     return YES;
 }
 							
