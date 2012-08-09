@@ -134,6 +134,7 @@ static void *DVViewControllerPlayerItemStatusObservationContext = &DVViewControl
                              nil];
     
     self.player.adPlaylist = adPlaylist;
+    self.player.delegate = self;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -167,6 +168,19 @@ static void *DVViewControllerPlayerItemStatusObservationContext = &DVViewControl
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
+}
+
+#pragma mark - Player Delegate
+
+- (BOOL)player:(DVIABPlayer *)player shouldPauseForAdBreak:(DVVideoPlayBreak *)playBreak
+{
+    [self.activityIndicator startAnimating];
+    return YES;
+}
+
+- (void)player:(DVIABPlayer *)player didFailPlayBreak:(DVVideoPlayBreak *)playBreak withError:(NSError *)error
+{
+    NSLog(@"player:didFailPlayBreak:error:%@", error);
 }
 
 @end

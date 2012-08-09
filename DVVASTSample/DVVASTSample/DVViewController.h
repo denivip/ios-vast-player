@@ -10,7 +10,7 @@
 #import "DVIABPlayer.h"
 
 
-@interface DVViewController : UIViewController
+@interface DVViewController : UIViewController <DVIABPlayerDelegate>
 
 @property (strong, nonatomic) IBOutlet UIView *playerView;
 @property (strong, nonatomic) IBOutlet UILabel *currentTimeLabel;

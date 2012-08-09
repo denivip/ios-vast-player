@@ -19,4 +19,10 @@
 @synthesize duration = _duration;
 @synthesize mediaFileURL = _mediaFileURL;
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"%@ %@ %@", [super description],
+            self.identifier, self.mediaFileURL];
+}
+
 @end
