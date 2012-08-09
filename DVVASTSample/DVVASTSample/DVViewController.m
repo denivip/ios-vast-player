@@ -14,6 +14,7 @@
 
 
 static void *DVViewControllerCurrentPlayerItemObservationContext = &DVViewControllerCurrentPlayerItemObservationContext;
+static void *DVViewControllerRateObservationContext = &DVViewControllerRateObservationContext;
 static void *DVViewControllerPlayerItemStatusObservationContext = &DVViewControllerPlayerItemStatusObservationContext;
 
 #define OPENX_AD_TAG_WITH_ZONE(ZONE_ID) ([NSURL URLWithString:[NSString stringWithFormat:@"http://openx.denivip.ru/delivery/fc.php?block=0&script=bannerTypeHtml:vastInlineBannerTypeHtml:vastInlineHtml&format=vast&nz=1&charset=UTF-8&r=0.1978856846690178&zones=z%%3D%u", (ZONE_ID)]])
@@ -30,6 +31,7 @@ static void *DVViewControllerPlayerItemStatusObservationContext = &DVViewControl
 @synthesize playerView = _playerView;
 @synthesize currentTimeLabel = _currentTimeLabel;
 @synthesize currentItemTitleLabel = _currentItemTitleLabel;
+@synthesize activityIndicator = _activityIndicator;
 @synthesize player = _player;
 @synthesize periodicTimeObserver = _periodicTimeObserver;
 
@@ -56,6 +58,15 @@ static void *DVViewControllerPlayerItemStatusObservationContext = &DVViewControl
         AVPlayerItemStatus status = [[change objectForKey:NSKeyValueChangeNewKey] integerValue];
         if (status == AVPlayerItemStatusReadyToPlay) [self.player play];
     }
+    else if (context == DVViewControllerRateObservationContext) {
+        float rate = [[change objectForKey:NSKeyValueChangeNewKey] floatValue];
+        if (rate > 0) {
+            [self.activityIndicator stopAnimating];
+        }
+        else {
+            [self.activityIndicator startAnimating];
+        }
+    }
     else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
@@ -80,6 +91,16 @@ static void *DVViewControllerPlayerItemStatusObservationContext = &DVViewControl
     [self.player seekToTime:CMTimeSubtract(CMTimeAdd(seekableRange.start, seekableRange.duration), CMTimeMake(10, 1))];
 }
 
+- (IBAction)playPauseButton:(id)sender
+{
+    if (self.player.rate > 0) {
+        [self.player pause];
+    }
+    else {
+        [self.player play];
+    }
+}
+
 #pragma mark - View Controller
 
 - (void)viewDidLoad
@@ -93,10 +114,16 @@ static void *DVViewControllerPlayerItemStatusObservationContext = &DVViewControl
                   forKeyPath:@"currentItem"
                      options:NSKeyValueObservingOptionInitial|NSKeyValueObservingOptionNew
                      context:DVViewControllerCurrentPlayerItemObservationContext];
+    [self.player addObserver:self
+                  forKeyPath:@"rate"
+                     options:NSKeyValueObservingOptionInitial|NSKeyValueObservingOptionNew
+                     context:DVViewControllerRateObservationContext];
 
     self.periodicTimeObserver = [self.player addPeriodicTimeObserverForInterval:CMTimeMake(1, 10) queue:NULL usingBlock:^(CMTime time) {
         DVTimeIntervalFormatter *formatter = [[DVTimeIntervalFormatter alloc] init];
-        self.currentTimeLabel.text = [formatter stringWithTimeInterval:CMTimeGetSeconds(time)];
+        self.currentTimeLabel.text = [NSString stringWithFormat:@"%@ / %@",
+                                      [formatter stringWithTimeInterval:CMTimeGetSeconds(time)],
+                                      [formatter stringWithTimeInterval:CMTimeGetSeconds(self.player.currentItem.duration)]];
     }];
     
     DVVideoMultipleAdPlaylist *adPlaylist = [[DVVideoMultipleAdPlaylist alloc] init];
@@ -126,9 +153,13 @@ static void *DVViewControllerPlayerItemStatusObservationContext = &DVViewControl
     [self.player removeTimeObserver:self.periodicTimeObserver];
     self.periodicTimeObserver = nil;
     
-    [self.player removeObserver:self forKeyPath:nil];
+    [self.player removeObserver:self forKeyPath:@"currentItem"
+                        context:DVViewControllerCurrentPlayerItemObservationContext];
+    [self.player removeObserver:self forKeyPath:@"rate"
+                        context:DVViewControllerRateObservationContext];
     self.player = nil;
     
+    [self setActivityIndicator:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
 }
