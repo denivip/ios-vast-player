@@ -78,6 +78,30 @@
     return videoAd;
 }
 
+- (id)initWithData:(NSData *)data error:(NSError *__autoreleasing *)error_
+{
+    NSError *error = nil;
+    DDXMLDocument *document = [[DDXMLDocument alloc] initWithData:data options:0 error:&error];
+    if (! document) {
+        if (error_ != nil) {
+            NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                                      error, NSUnderlyingErrorKey, nil];
+            *error_ = [NSError errorWithDomain:DVVideoAdServingTemplateErrorDomain
+                                          code:DVVideoAdServingTemplateXMLParsingErrorCode
+                                      userInfo:userInfo];
+        }
+        return nil;
+    }
+    
+    self = [self initWithXMLDocument:document error:&error];
+    if (! self) {
+        if (error_ != nil) *error_ = error;
+        return nil;
+    }
+    
+    return self;
+}
+
 - (id)initWithXMLDocument:(DDXMLDocument *)document error:(NSError *__autoreleasing *)error
 {
     if (self = [self init]) {
