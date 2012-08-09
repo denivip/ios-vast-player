@@ -35,6 +35,8 @@
 		E38381D915D270020056C4CE /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E38381D815D270020056C4CE /* QuartzCore.framework */; };
 		E38381DB15D290350056C4CE /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = E38381DA15D290340056C4CE /* Icon.png */; };
 		E38381DD15D2903B0056C4CE /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E38381DC15D2903B0056C4CE /* Icon@2x.png */; };
+		E38381E115D3EFBF0056C4CE /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = E38381E015D3EFBF0056C4CE /* Icon-72.png */; };
+		E38381E315D3EFC30056C4CE /* Icon-72@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E38381E215D3EFC30056C4CE /* Icon-72@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -88,6 +90,8 @@
 		E38381D815D270020056C4CE /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		E38381DA15D290340056C4CE /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		E38381DC15D2903B0056C4CE /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
+		E38381E015D3EFBF0056C4CE /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
+		E38381E215D3EFC30056C4CE /* Icon-72@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +114,8 @@
 		E3361B9915D151D2002C1905 = {
 			isa = PBXGroup;
 			children = (
+				E38381E215D3EFC30056C4CE /* Icon-72@2x.png */,
+				E38381E015D3EFBF0056C4CE /* Icon-72.png */,
 				E38381DC15D2903B0056C4CE /* Icon@2x.png */,
 				E38381DA15D290340056C4CE /* Icon.png */,
 				E3361BAE15D151D2002C1905 /* DVVASTSample */,
@@ -301,6 +307,8 @@
 				E3361BBC15D151D2002C1905 /* MainStoryboard.storyboard in Resources */,
 				E38381DB15D290350056C4CE /* Icon.png in Resources */,
 				E38381DD15D2903B0056C4CE /* Icon@2x.png in Resources */,
+				E38381E115D3EFBF0056C4CE /* Icon-72.png in Resources */,
+				E38381E315D3EFC30056C4CE /* Icon-72@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -419,7 +427,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "DVVASTSample/DVVASTSample-Prefix.pch";
 				INFOPLIST_FILE = "DVVASTSample/DVVASTSample-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -430,7 +440,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "DVVASTSample/DVVASTSample-Prefix.pch";
 				INFOPLIST_FILE = "DVVASTSample/DVVASTSample-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
