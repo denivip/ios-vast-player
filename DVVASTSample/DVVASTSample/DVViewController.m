@@ -21,6 +21,7 @@ static void *DVViewControllerPlayerItemStatusObservationContext = &DVViewControl
 @interface DVViewController ()
 
 @property (nonatomic, strong) id periodicTimeObserver;
+@property (nonatomic) BOOL didStartPlayback;
 
 @end
 
@@ -44,6 +45,7 @@ static void *DVViewControllerPlayerItemStatusObservationContext = &DVViewControl
                     options:NSKeyValueObservingOptionInitial|NSKeyValueObservingOptionNew
                     context:DVViewControllerPlayerItemStatusObservationContext];
     self.player.contentPlayerItem = playerItem;
+    self.didStartPlayback = NO;
     [self.player replaceCurrentItemWithPlayerItem:playerItem];
 }
 
@@ -54,7 +56,13 @@ static void *DVViewControllerPlayerItemStatusObservationContext = &DVViewControl
     }
     else if (context == DVViewControllerPlayerItemStatusObservationContext) {
         AVPlayerItemStatus status = [[change objectForKey:NSKeyValueChangeNewKey] integerValue];
-        if (status == AVPlayerItemStatusReadyToPlay) [self.player play];
+        NSLog(@"DVViewControllerPlayerItemStatusObservationContext %i", status);
+        if (status == AVPlayerItemStatusReadyToPlay &&
+            ! self.didStartPlayback) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.didStartPlayback = YES;
+                [self.player play];
+            });
         }
     }
     else {
@@ -78,7 +86,8 @@ static void *DVViewControllerPlayerItemStatusObservationContext = &DVViewControl
 {
     NSArray *seekableTimeRanges = self.player.currentItem.seekableTimeRanges;
     CMTimeRange seekableRange = [[seekableTimeRanges objectAtIndex:0] CMTimeRangeValue];
-    [self.player seekToTime:CMTimeSubtract(CMTimeAdd(seekableRange.start, seekableRange.duration), CMTimeMake(10, 1))];
+    [self.player seekToTime:CMTimeSubtract(CMTimeAdd(seekableRange.start, seekableRange.duration),
+                                           CMTimeMake(10, 1))];
 }
 
 - (IBAction)playPauseButton:(id)sender
@@ -98,6 +107,7 @@ static void *DVViewControllerPlayerItemStatusObservationContext = &DVViewControl
     [super viewDidLoad];
     
     self.player = [[DVIABPlayer alloc] init];
+    self.player.playerLayer = (AVPlayerLayer *)self.playerView.layer;
     ((AVPlayerLayer *)self.playerView.layer).player = self.player;
     
     [self.player addObserver:self
@@ -127,7 +137,8 @@ static void *DVViewControllerPlayerItemStatusObservationContext = &DVViewControl
 {
     [super viewWillAppear:animated];
 
-    NSURL *contentURL = [NSURL URLWithString:@"http://denivip.ru/sites/default/files/ios-iab/content.mp4"];
+    NSURL *contentURL = [NSURL URLWithString:@"https://devimages.apple.com.edgekey.net/resources/http-streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8"];
+    // NSURL *contentURL = [NSURL URLWithString:@"http://denivip.ru/sites/default/files/ios-iab/content.mp4"];
     [self startPlaybackWithContentURL:contentURL];
 }
 

@@ -15,16 +15,17 @@
 #define AD_REQUEST_TIMEOUT_INTERVAL ((NSTimeInterval)5.f)
 #define AD_PLAY_BREAK_MIN_INTERVAL_BETWEEN ((NSTimeInterval)5.f)
 
-static void *DVIABPlayerContentPlayerItemStatusObservationContext = &DVIABPlayerContentPlayerItemStatusObservationContext;
 static void *DVIABPlayerInlineAdPlayerItemStatusObservationContext = &DVIABPlayerInlineAdPlayerItemStatusObservationContext;
-static void *DVIABPlayerCurrentItemObservationContext = &DVIABPlayerCurrentItemObservationContext;
-static void *DVIABPlayerRateObservationContext = &DVIABPlayerRateObservationContext;
+static void *DVIABContentPlayerRateObservationContext = &DVIABContentPlayerRateObservationContext;
+static void *DVIABAdPlayerRateObservationContext = &DVIABAdPlayerRateObservationContext;
 
 
 NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 
 
 @interface DVIABPlayer ()
+
+@property (nonatomic, strong) AVPlayer *adPlayer;
 
 @property (nonatomic, strong) id playBreaksTimeObserver;
 @property (nonatomic, strong) id periodicTimeObserver;
@@ -53,17 +54,34 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 {
     if (self = [super init]) {
         [self addObserver:self
-               forKeyPath:@"currentItem"
-                  options:NSKeyValueObservingOptionNew
-                  context:DVIABPlayerCurrentItemObservationContext];
-        [self addObserver:self
                forKeyPath:@"rate"
                   options:NSKeyValueObservingOptionNew
-                  context:DVIABPlayerRateObservationContext];
+                  context:DVIABContentPlayerRateObservationContext];
     }
     return self;
 }
 
+@synthesize adPlayer = _adPlayer;
+
+- (void)setAdPlayer:(AVPlayer *)adPlayer
+{
+    if (adPlayer != _adPlayer && _adPlayer != nil) {
+        [_adPlayer removeObserver:self
+                       forKeyPath:@"rate"
+                          context:DVIABAdPlayerRateObservationContext];
+    }
+    
+    _adPlayer = adPlayer;
+    
+    if (_adPlayer != nil) {
+        [_adPlayer addObserver:self
+                    forKeyPath:@"rate"
+                       options:NSKeyValueObservingOptionNew
+                       context:DVIABAdPlayerRateObservationContext];
+    }
+}
+
+@synthesize playerLayer = _playerLayer;
 @synthesize delegate = _delegate;
 @synthesize playBreaksQueue = _playBreaksQueue;
 @synthesize adRequestData = _adRequestData;
@@ -75,8 +93,6 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
         [[NSNotificationCenter defaultCenter] removeObserver:self
                                                         name:AVPlayerItemDidPlayToEndTimeNotification
                                                       object:_contentPlayerItem];
-        [_contentPlayerItem removeObserver:self forKeyPath:@"status"
-                                   context:DVIABPlayerContentPlayerItemStatusObservationContext];
     }
     
     _contentPlayerItem = contentPlayerItem;
@@ -86,10 +102,6 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
                                                  selector:@selector(contentPlayerItemDidReachEnd:)
                                                      name:AVPlayerItemDidPlayToEndTimeNotification
                                                    object:_contentPlayerItem];
-        [_contentPlayerItem addObserver:self
-                             forKeyPath:@"status"
-                                options:NSKeyValueObservingOptionInitial|NSKeyValueObservingOptionNew
-                                context:DVIABPlayerContentPlayerItemStatusObservationContext];
     }
 }
 
@@ -109,18 +121,15 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    if (context == DVIABPlayerContentPlayerItemStatusObservationContext) {
-        AVPlayerItemStatus status = [[change objectForKey:NSKeyValueChangeNewKey] integerValue];
-        NSLog(@"DVIABPlayerContentPlayerItemStatusObservationContext %i", status);
-    }
-    else if (context == DVIABPlayerInlineAdPlayerItemStatusObservationContext) {
+    if (context == DVIABPlayerInlineAdPlayerItemStatusObservationContext) {
         AVPlayerItemStatus status = [[change objectForKey:NSKeyValueChangeNewKey] integerValue];
         NSLog(@"DVIABPlayerInlineAdPlayerItemStatusObservationContext %i", status);
         
         dispatch_async(dispatch_get_main_queue(), ^{
             switch (status) {
                 case AVPlayerItemStatusReadyToPlay:
-                    [self play];
+                    self.playerLayer.player = self.adPlayer;
+                    [self.adPlayer play];
                     break;
                     
                 case AVPlayerItemStatusFailed:
@@ -133,33 +142,12 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
             }
         });
     }
-    else if (context == DVIABPlayerCurrentItemObservationContext) {
-        AVPlayerItem *currentItem = [change objectForKey:NSKeyValueChangeNewKey];
-        NSLog(@"DVIABPlayerCurrentItemObservationContext %@", currentItem);
-
-        if (currentItem == self.contentPlayerItem &&
-            currentItem.status == AVPlayerItemStatusReadyToPlay &&
-            ! self.contentPlayerItemDidReachEnd) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self play]; // on finish ad playback
-            });
-        }
-    }
-    else if (context == DVIABPlayerRateObservationContext) {
-        // Sometimes AVPlayer just stops playback before reaching end.
-        // In this case we need to call play.
-        
+    else if (context == DVIABContentPlayerRateObservationContext) {
         float rate = [[change objectForKey:NSKeyValueChangeNewKey] floatValue];
         NSLog(@"DVIABPlayerRateObservationContext %@ %f", self.currentItem, rate);
-
+        
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (rate == 0 &&
-                self.currentItem != self.contentPlayerItem) {
-                [self play];
-            }
-            
-            if (rate > 0 &&
-                self.currentItem == self.contentPlayerItem) {
+            if (rate > 0) {
                 self.contentPlayerItemDidReachEnd = NO;
                 
                 if (CMTimeCompare(CMTimeAbsoluteValue(self.currentItem.currentTime),
@@ -167,6 +155,20 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
                     self.playBreaksQueue = [[self.adPlaylist preRollPlayBreaks] mutableCopy];
                     [self startPlayBreaksFromQueue];
                 }
+            }
+        });
+    }
+    else if (context == DVIABAdPlayerRateObservationContext) {
+        // Sometimes AVPlayer just stops playback before reaching end.
+        // In this case we need to call play.
+        
+        float rate = [[change objectForKey:NSKeyValueChangeNewKey] floatValue];
+        NSLog(@"DVIABPlayerRateObservationContext %@ %f", self.currentItem, rate);
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (rate == 0) {
+                self.playerLayer.player = self.adPlayer;
+                [self.adPlayer play];
             }
         });
     }
@@ -238,6 +240,8 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
     }
     
     if ([self.playBreaksQueue count] > 0) {
+        [self pause];
+        
         DVVideoPlayBreak *brk = [self.playBreaksQueue objectAtIndex:0];
         [self.playBreaksQueue removeObjectAtIndex:0];
         
@@ -247,7 +251,6 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
         
         self.currentPlayBreak = brk;
         
-        [self pause];
         [self fetchPlayBreakAdTemplate:self.currentPlayBreak];
     }
     else {
@@ -258,12 +261,13 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 - (void)finishPlayBreaksQueue
 {
     self.didFinishPlayBreakRecently = YES;
-    if (self.currentItem != self.contentPlayerItem) {
-        [self replaceCurrentItemWithPlayerItem:self.contentPlayerItem];
-    }
-    else if (self.currentItem.status == AVPlayerItemStatusReadyToPlay &&
-             ! self.contentPlayerItemDidReachEnd) {
-        [self play];
+    if (self.contentPlayerItem.status == AVPlayerItemStatusReadyToPlay) {
+        self.playerLayer.player = self;
+        self.adPlayer = nil;
+        
+        if (! self.contentPlayerItemDidReachEnd) {
+            [self play];
+        }
     }
 }
 
@@ -316,7 +320,8 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
                     context:DVIABPlayerInlineAdPlayerItemStatusObservationContext];
     
     self.currentInlineAdPlayerItem = playerItem;
-    [self replaceCurrentItemWithPlayerItem:playerItem];
+    
+    self.adPlayer = [[AVPlayer alloc] initWithPlayerItem:playerItem];
 }
 
 - (void)inlineAdPlayerItemDidReachEnd:(NSNotification *)notification
@@ -359,12 +364,11 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 
 - (void)dealloc
 {
+    self.adPlayer = nil; // remove observers
     self.adPlaylist = nil; // to remove time observer
     self.contentPlayerItem = nil; // to remove notification observer
-    [self removeObserver:self forKeyPath:@"currentItem"
-                 context:DVIABPlayerCurrentItemObservationContext];
     [self removeObserver:self forKeyPath:@"rate"
-                 context:DVIABPlayerRateObservationContext];
+                 context:DVIABContentPlayerRateObservationContext];
 }
 
 #pragma mark - Networking

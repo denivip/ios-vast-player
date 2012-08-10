@@ -35,6 +35,7 @@ enum {
 
 @interface DVIABPlayer : AVPlayer <NSURLConnectionDataDelegate>
 
+@property (nonatomic, strong) AVPlayerLayer *playerLayer;
 @property (nonatomic, weak) id<DVIABPlayerDelegate> delegate;
 @property (nonatomic, strong) AVPlayerItem *contentPlayerItem; // main content player item as opposed to advertisement player items
 @property (nonatomic, strong) DVVideoMultipleAdPlaylist *adPlaylist;
