@@ -15,7 +15,6 @@
 @property (strong, nonatomic) IBOutlet UIView *playerView;
 @property (strong, nonatomic) IBOutlet UILabel *currentTimeLabel;
 @property (strong, nonatomic) IBOutlet UILabel *currentItemTitleLabel;
-@property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 
 @property (nonatomic, strong) DVIABPlayer *player;
 
