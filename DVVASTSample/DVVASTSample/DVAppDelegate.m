@@ -8,6 +8,16 @@
 
 #import "DVAppDelegate.h"
 #import <AVFoundation/AVFoundation.h>
+#import <AudioToolbox/AudioToolbox.h>
+
+
+static void MyPropertyListener(void                      *inClientData,
+                               AudioSessionPropertyID    inID,
+                               UInt32                    inDataSize,
+                               const void                *inData)
+{
+    NSLog(@"kAudioSessionProperty_ServerDied");
+}
 
 
 @implementation DVAppDelegate
@@ -16,6 +26,11 @@
 {
     AVAudioSession *audioSession = [AVAudioSession sharedInstance]; // to implicitly initialize
     [audioSession setCategory:AVAudioSessionCategoryPlayback error:nil];
+    
+    OSStatus err = AudioSessionAddPropertyListener(kAudioSessionProperty_ServerDied,
+                                                   MyPropertyListener,
+                                                   (__bridge void *)(self));
+    NSAssert(err == noErr, @"AudioSessionAddPropertyListener error %li", err);
     
     return YES;
 }
