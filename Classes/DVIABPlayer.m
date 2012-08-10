@@ -117,19 +117,21 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
         AVPlayerItemStatus status = [[change objectForKey:NSKeyValueChangeNewKey] integerValue];
         NSLog(@"DVIABPlayerInlineAdPlayerItemStatusObservationContext %i", status);
         
-        switch (status) {
-            case AVPlayerItemStatusReadyToPlay:
-                [self play];
-                break;
-                
-            case AVPlayerItemStatusFailed:
-                NSLog(@"AVPlayerItemStatusFailed %@", self.currentInlineAdPlayerItem.error);
-                [self finishCurrentInlineAd:self.currentInlineAdPlayerItem];
-                break;
-
-            case AVPlayerItemStatusUnknown:
-                break;
-        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            switch (status) {
+                case AVPlayerItemStatusReadyToPlay:
+                    [self play];
+                    break;
+                    
+                case AVPlayerItemStatusFailed:
+                    NSLog(@"AVPlayerItemStatusFailed %@", self.currentInlineAdPlayerItem.error);
+                    [self finishCurrentInlineAd:self.currentInlineAdPlayerItem];
+                    break;
+                    
+                case AVPlayerItemStatusUnknown:
+                    break;
+            }
+        });
     }
     else if (context == DVIABPlayerCurrentItemObservationContext) {
         AVPlayerItem *currentItem = [change objectForKey:NSKeyValueChangeNewKey];
@@ -138,7 +140,9 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
         if (currentItem == self.contentPlayerItem &&
             currentItem.status == AVPlayerItemStatusReadyToPlay &&
             ! self.contentPlayerItemDidReachEnd) {
-            [self play]; // on finish ad playback
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self play]; // on finish ad playback
+            });
         }
     }
     else if (context == DVIABPlayerRateObservationContext) {
@@ -148,15 +152,23 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
         float rate = [[change objectForKey:NSKeyValueChangeNewKey] floatValue];
         NSLog(@"DVIABPlayerRateObservationContext %@ %f", self.currentItem, rate);
 
-        if (rate == 0 &&
-            self.currentItem != self.contentPlayerItem) {
-            [self play];
-        }
-        
-        if (rate > 0 &&
-            self.currentItem == self.contentPlayerItem) {
-            self.contentPlayerItemDidReachEnd = NO;
-        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (rate == 0 &&
+                self.currentItem != self.contentPlayerItem) {
+                [self play];
+            }
+            
+            if (rate > 0 &&
+                self.currentItem == self.contentPlayerItem) {
+                self.contentPlayerItemDidReachEnd = NO;
+                
+                if (CMTimeCompare(CMTimeAbsoluteValue(self.currentItem.currentTime),
+                                  CMTimeMake(1, 1)) == -1) {
+                    self.playBreaksQueue = [[self.adPlaylist preRollPlayBreaks] mutableCopy];
+                    [self startPlayBreaksFromQueue];
+                }
+            }
+        });
     }
     else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -178,9 +190,6 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
     
     if (_adPlaylist != nil) {
         NSMutableArray *boundaryTimes = [NSMutableArray array];
-        if ([[_adPlaylist preRollPlayBreaks] count] > 0) {
-            [boundaryTimes addObject:[NSValue valueWithCMTime:CMTimeMake(1, 1000)]];
-        }
         [boundaryTimes addObjectsFromArray:[[_adPlaylist midRollTimes] mutableCopy]];
         
         NSLog(@"%@", boundaryTimes);
@@ -194,16 +203,9 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
             CMTime currentTime = self.currentTime;
             NSLog(@"playBreaksTimeObserver %@", CMTimeCopyDescription(nil, currentTime));
             
-            if (CMTimeCompare(CMTimeAbsoluteValue(currentTime),
-                              CMTimeMake(1, 1)) == -1) {
-                self.playBreaksQueue = [[self.adPlaylist preRollPlayBreaks] mutableCopy];
-            }
-            else {
-                NSArray *playBreaks = [self.adPlaylist midRollPlayBreaksWithTime:currentTime approximate:YES];
-                NSCAssert([playBreaks count], @"No play breaks found for boundary time");
-                self.playBreaksQueue = [playBreaks mutableCopy];
-            }
-
+            NSArray *playBreaks = [self.adPlaylist midRollPlayBreaksWithTime:currentTime approximate:YES];
+            NSCAssert([playBreaks count], @"No play breaks found for boundary time");
+            self.playBreaksQueue = [playBreaks mutableCopy];
             [player startPlayBreaksFromQueue];
         }];
         
