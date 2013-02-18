@@ -12,3 +12,23 @@
     #import <UIKit/UIKit.h>
     #import <Foundation/Foundation.h>
 #endif
+
+#ifdef DEBUG
+    #define DLog(fmt, ...)      NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
+    #define DLogC()             DLog(@"");
+    #define DLogV(var)          NSLog(@"%s [Line %d] <%p> " #var ": %@", __PRETTY_FUNCTION__, __LINE__, self, var)
+    #define DLogR(rect)         DLogV(NSStringFromRect(rect))
+    #define DLogS(size)         DLogV(NSStringFromSize(size))
+    #define DLogI(var)          NSLog(@"%s [Line %d] " #var ": %d", __PRETTY_FUNCTION__, __LINE__, var)
+    #define DLogF(var)          NSLog(@"%s [Line %d] " #var ": %f", __PRETTY_FUNCTION__, __LINE__, var)
+    #define DLogB(var)          NSLog(@"%s [Line %d] " #var ": %@", __PRETTY_FUNCTION__, __LINE__, var ? @"YES" : @"NO")
+#else
+    #define DLog(...)
+    #define DLogC()
+    #define DLogV(var)
+    #define DLogR(rect)
+    #define DLogS(size)
+    #define DLogI(var)
+    #define DLogF(var)
+    #define DLogB(var)
+#endif
