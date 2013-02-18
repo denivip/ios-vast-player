@@ -20,8 +20,9 @@
     videoAd.system = [[[element elementsForName:@"AdSystem"] objectAtIndex:0] stringValue];
     videoAd.title = [[[element elementsForName:@"AdSystem"] objectAtIndex:0] stringValue];
     
-    NSString *impressionString = [[[[[element elementsForName:@"Impression"] objectAtIndex:0]
-                                    elementsForName:@"URL"] objectAtIndex:0] stringValue];
+    DDXMLElement *impressionElement = [[element elementsForName:@"Impression"] objectAtIndex:0];
+    NSArray *urls = [impressionElement elementsForName:@"URL"];
+    NSString *impressionString = urls && urls.count ? [[urls objectAtIndex:0] stringValue] : [impressionElement stringValue];
     videoAd.impressionURL = [NSURL URLWithString:impressionString];
     
     DDXMLElement *videoElement = [[element elementsForName:@"Video"] objectAtIndex:0];
