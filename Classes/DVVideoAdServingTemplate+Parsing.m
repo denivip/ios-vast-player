@@ -47,7 +47,14 @@
     videoAd.duration = [timeIntervalParser timeIntervalWithString:durationString];
     
     DDXMLElement *mediaFiles = [[videoElement elementsForName:@"MediaFiles"] objectAtIndex:0];
-    DDXMLElement *mediaFile =  [[mediaFiles elementsForName:@"MediaFile"] objectAtIndex:0];
+    DDXMLElement *mediaFile = nil;
+    for (DDXMLElement *currentMF in [mediaFiles elementsForName:@"MediaFile"]) {
+        NSString *type = [[currentMF attributeForName:@"type"] stringValue];
+        if ([type isEqualToString:@"mobile/m3u8"] || [type isEqualToString:@"video/mp4"]) {
+            mediaFile = currentMF;
+            break;
+        }
+    }
     urls = [mediaFile elementsForName:@"URL"];
     DDXMLDocument *url = urls && urls.count ? [urls objectAtIndex:0] : mediaFile;
     videoAd.mediaFileURL = [NSURL URLWithString:[url stringValue]];
