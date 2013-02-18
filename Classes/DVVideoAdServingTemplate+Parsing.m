@@ -25,7 +25,22 @@
     NSString *impressionString = urls && urls.count ? [[urls objectAtIndex:0] stringValue] : [impressionElement stringValue];
     videoAd.impressionURL = [NSURL URLWithString:impressionString];
     
-    DDXMLElement *videoElement = [[element elementsForName:@"Video"] objectAtIndex:0];
+    NSArray *videos = [element elementsForName:@"Video"];
+    DDXMLElement *videoElement = nil;
+    if (videos && videos.count) {
+        videoElement = [videos objectAtIndex:0];
+    } else {
+        NSArray *creatives = [element elementsForName:@"Creatives"];
+        if (creatives && creatives.count) {
+            NSArray *creative = [[creatives objectAtIndex:0] elementsForName:@"Creative"];
+            if (creative && creative.count) {
+                NSArray *linears = [[creative objectAtIndex:0] elementsForName:@"Linear"];
+                if (linears && linears.count) {
+                    videoElement = [linears objectAtIndex:0];
+                }
+            }
+        }
+    }
     
     NSString *durationString = [[[videoElement elementsForName:@"Duration"] objectAtIndex:0] stringValue];
     DVTimeIntervalFormatter *timeIntervalParser = [[DVTimeIntervalFormatter alloc] init];
