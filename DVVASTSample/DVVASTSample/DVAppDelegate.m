@@ -22,8 +22,15 @@ static void MyPropertyListener(void                      *inClientData,
 
 @implementation DVAppDelegate
 
+void uncaughtExceptionHandler(NSException *exception) {
+    NSLog(@"CRASH: %@", exception);
+    NSLog(@"Stack Trace: %@", [exception callStackSymbols]);
+    // Internal error reporting
+}
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
     AVAudioSession *audioSession = [AVAudioSession sharedInstance]; // to implicitly initialize
     [audioSession setCategory:AVAudioSessionCategoryPlayback error:nil];
     
