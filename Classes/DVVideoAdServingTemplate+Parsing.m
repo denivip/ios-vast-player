@@ -46,10 +46,11 @@
     DVTimeIntervalFormatter *timeIntervalParser = [[DVTimeIntervalFormatter alloc] init];
     videoAd.duration = [timeIntervalParser timeIntervalWithString:durationString];
     
-    NSString *mediaFileString = [[[[[[[videoElement elementsForName:@"MediaFiles"] objectAtIndex:0]
-                                     elementsForName:@"MediaFile"] objectAtIndex:0]
-                                   elementsForName:@"URL"] objectAtIndex:0] stringValue];
-    videoAd.mediaFileURL = [NSURL URLWithString:mediaFileString];
+    DDXMLElement *mediaFiles = [[videoElement elementsForName:@"MediaFiles"] objectAtIndex:0];
+    DDXMLElement *mediaFile =  [[mediaFiles elementsForName:@"MediaFile"] objectAtIndex:0];
+    urls = [mediaFile elementsForName:@"URL"];
+    DDXMLDocument *url = urls && urls.count ? [urls objectAtIndex:0] : mediaFile;
+    videoAd.mediaFileURL = [NSURL URLWithString:[url stringValue]];
     
     return YES;
 }
