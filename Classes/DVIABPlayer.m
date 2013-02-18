@@ -197,27 +197,28 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
         NSLog(@"%@", boundaryTimes);
         
         id __block player = self;
+        __block DVIABPlayer *SELF = self;
         self.playBreaksTimeObserver = [self addBoundaryTimeObserverForTimes:boundaryTimes queue:NULL usingBlock:^{
-            if (self.currentItem != self.contentPlayerItem) {
+            if (SELF.currentItem != SELF.contentPlayerItem) {
                 return;
             }
             
-            CMTime currentTime = self.currentTime;
+            CMTime currentTime = SELF.currentTime;
             NSLog(@"playBreaksTimeObserver %@", CMTimeCopyDescription(nil, currentTime));
             
-            NSArray *playBreaks = [self.adPlaylist midRollPlayBreaksWithTime:currentTime approximate:YES];
+            NSArray *playBreaks = [SELF.adPlaylist midRollPlayBreaksWithTime:currentTime approximate:YES];
             NSCAssert([playBreaks count], @"No play breaks found for boundary time");
-            self.playBreaksQueue = [playBreaks mutableCopy];
+            SELF.playBreaksQueue = [playBreaks mutableCopy];
             [player startPlayBreaksFromQueue];
         }];
         
         __block CMTime previousTime = kCMTimeNegativeInfinity;
         self.periodicTimeObserver = [self addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(AD_PLAY_BREAK_MIN_INTERVAL_BETWEEN, 1) queue:NULL usingBlock:^(CMTime time) {
-            if (self.currentItem == self.contentPlayerItem &&
+            if (SELF.currentItem == SELF.contentPlayerItem &&
                 CMTimeCompare(CMTimeMakeWithSeconds(AD_PLAY_BREAK_MIN_INTERVAL_BETWEEN, 1),
                               CMTimeAbsoluteValue(CMTimeSubtract(previousTime, time))) == -1) {
                     previousTime = time;
-                    self.didFinishPlayBreakRecently = NO;
+                    SELF.didFinishPlayBreakRecently = NO;
                 }
         }];
     }

@@ -115,11 +115,12 @@ static void *DVViewControllerPlayerItemStatusObservationContext = &DVViewControl
                      options:NSKeyValueObservingOptionInitial|NSKeyValueObservingOptionNew
                      context:DVViewControllerCurrentPlayerItemObservationContext];
 
+    __block DVViewController *SELF = self;
     self.periodicTimeObserver = [self.player addPeriodicTimeObserverForInterval:CMTimeMake(1, 10) queue:NULL usingBlock:^(CMTime time) {
         DVTimeIntervalFormatter *formatter = [[DVTimeIntervalFormatter alloc] init];
-        self.currentTimeLabel.text = [NSString stringWithFormat:@"%@ / %@",
+        SELF.currentTimeLabel.text = [NSString stringWithFormat:@"%@ / %@",
                                       [formatter stringWithTimeInterval:CMTimeGetSeconds(time)],
-                                      [formatter stringWithTimeInterval:CMTimeGetSeconds(self.player.currentItem.duration)]];
+                                      [formatter stringWithTimeInterval:CMTimeGetSeconds(SELF.player.currentItem.duration)]];
     }];
     
     DVVideoMultipleAdPlaylist *adPlaylist = [[DVVideoMultipleAdPlaylist alloc] init];
