@@ -50,7 +50,7 @@
     DDXMLElement *mediaFile = nil;
     for (DDXMLElement *currentMF in [mediaFiles elementsForName:@"MediaFile"]) {
         NSString *type = [[currentMF attributeForName:@"type"] stringValue];
-        if ([type isEqualToString:@"mobile/m3u8"] || [type isEqualToString:@"video/mp4"]) {
+        if ([type isEqualToString:@"mobile/m3u8"] || [type isEqualToString:@"video/mp4"] || [type isEqualToString:@"video/x-mp4"]) {
             mediaFile = currentMF;
             break;
         }
@@ -86,6 +86,19 @@
     }
     else if ([adContentsName isEqualToString:@"Wrapper"]) {
         videoAd = [[DVWrapperVideoAd alloc] init];
+        
+        NSArray *vastTagArray = [adContents elementsForName:@"VASTAdTagURL"];
+        DDXMLElement *vastTagURI = nil;
+        if (vastTagArray && vastTagArray.count) {
+            // VAST 1.x
+            vastTagURI = [[[vastTagArray objectAtIndex:0] elementsForName:@"URL"] objectAtIndex:0];
+        } else {
+            // VAST 2.0
+            vastTagArray = [adContents elementsForName:@"VASTAdTagURI"];
+            vastTagURI = [vastTagArray objectAtIndex:0];
+        }
+        ((DVWrapperVideoAd*)videoAd).URL = [NSURL URLWithString:[vastTagURI stringValue]];
+        DLogV(((DVWrapperVideoAd*)videoAd).URL);
         NSAssert(NO, @"Wrapper ads not implemented");
         return nil;
     }
