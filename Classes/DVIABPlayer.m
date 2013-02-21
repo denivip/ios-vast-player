@@ -198,29 +198,30 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
         
         VLogV(boundaryTimes);
         
-        id __block player = self;
-        __block DVIABPlayer *SELF = self;
-        self.playBreaksTimeObserver = [self addBoundaryTimeObserverForTimes:boundaryTimes queue:NULL usingBlock:^{
-            if (SELF.currentItem != SELF.contentPlayerItem) {
-                return;
-            }
-            
-            CMTime currentTime = SELF.currentTime;
-            VLog(@"playBreaksTimeObserver %@", CMTimeCopyDescription(nil, currentTime));
-            
-            NSArray *playBreaks = [SELF.adPlaylist midRollPlayBreaksWithTime:currentTime approximate:YES];
-            NSCAssert([playBreaks count], @"No play breaks found for boundary time");
-            SELF.playBreaksQueue = [playBreaks mutableCopy];
-            [player startPlayBreaksFromQueue];
-        }];
+        DVIABPlayer* __block player = self;
+        if (boundaryTimes && boundaryTimes.count) {
+            self.playBreaksTimeObserver = [self addBoundaryTimeObserverForTimes:boundaryTimes queue:NULL usingBlock:^{
+                if (player.currentItem != player.contentPlayerItem) {
+                    return;
+                }
+                
+                CMTime currentTime = player.currentTime;
+                VLog(@"playBreaksTimeObserver %@", CMTimeCopyDescription(nil, currentTime));
+                
+                NSArray *playBreaks = [player.adPlaylist midRollPlayBreaksWithTime:currentTime approximate:YES];
+                NSCAssert([playBreaks count], @"No play breaks found for boundary time");
+                player.playBreaksQueue = [playBreaks mutableCopy];
+                [player startPlayBreaksFromQueue];
+            }];
+        }
         
         __block CMTime previousTime = kCMTimeNegativeInfinity;
         self.periodicTimeObserver = [self addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(AD_PLAY_BREAK_MIN_INTERVAL_BETWEEN, 1) queue:NULL usingBlock:^(CMTime time) {
-            if (SELF.currentItem == SELF.contentPlayerItem &&
+            if (player.currentItem == player.contentPlayerItem &&
                 CMTimeCompare(CMTimeMakeWithSeconds(AD_PLAY_BREAK_MIN_INTERVAL_BETWEEN, 1),
                               CMTimeAbsoluteValue(CMTimeSubtract(previousTime, time))) == -1) {
                     previousTime = time;
-                    SELF.didFinishPlayBreakRecently = NO;
+                    player.didFinishPlayBreakRecently = NO;
                 }
         }];
     }
