@@ -107,7 +107,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 
 - (void)contentPlayerItemDidReachEnd:(NSNotification *)notification
 {
-    NSLog(@"contentPlayerItemDidReachEnd:");
+    VLogC();
     
     dispatch_async(dispatch_get_main_queue(), ^{
         if (! self.contentPlayerItemDidReachEnd) {
@@ -123,7 +123,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 {
     if (context == DVIABPlayerInlineAdPlayerItemStatusObservationContext) {
         AVPlayerItemStatus status = [[change objectForKey:NSKeyValueChangeNewKey] integerValue];
-        NSLog(@"DVIABPlayerInlineAdPlayerItemStatusObservationContext %i", status);
+        VLog(@"DVIABPlayerInlineAdPlayerItemStatusObservationContext %i", status);
         
         dispatch_async(dispatch_get_main_queue(), ^{
             switch (status) {
@@ -133,7 +133,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
                     break;
                     
                 case AVPlayerItemStatusFailed:
-                    NSLog(@"AVPlayerItemStatusFailed %@", self.currentInlineAdPlayerItem.error);
+                    VLog(@"AVPlayerItemStatusFailed %@", self.currentInlineAdPlayerItem.error);
                     [self finishCurrentInlineAd:self.currentInlineAdPlayerItem];
                     break;
                     
@@ -144,7 +144,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
     }
     else if (context == DVIABContentPlayerRateObservationContext) {
         float rate = [[change objectForKey:NSKeyValueChangeNewKey] floatValue];
-        NSLog(@"DVIABPlayerRateObservationContext %@ %f", self.currentItem, rate);
+        VLog(@"DVIABPlayerRateObservationContext %@ %f", self.currentItem, rate);
         
         dispatch_async(dispatch_get_main_queue(), ^{
             if (rate > 0) {
@@ -163,7 +163,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
         // In this case we need to call play.
         
         float rate = [[change objectForKey:NSKeyValueChangeNewKey] floatValue];
-        NSLog(@"DVIABPlayerRateObservationContext %@ %f", self.currentItem, rate);
+        VLog(@"DVIABPlayerRateObservationContext %@ %f", self.currentItem, rate);
 
         dispatch_async(dispatch_get_main_queue(), ^{
             if (rate == 0) {
@@ -194,7 +194,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
         NSMutableArray *boundaryTimes = [NSMutableArray array];
         [boundaryTimes addObjectsFromArray:[[_adPlaylist midRollTimes] mutableCopy]];
         
-        NSLog(@"%@", boundaryTimes);
+        VLogV(boundaryTimes);
         
         id __block player = self;
         __block DVIABPlayer *SELF = self;
@@ -204,7 +204,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
             }
             
             CMTime currentTime = SELF.currentTime;
-            NSLog(@"playBreaksTimeObserver %@", CMTimeCopyDescription(nil, currentTime));
+            VLog(@"playBreaksTimeObserver %@", CMTimeCopyDescription(nil, currentTime));
             
             NSArray *playBreaks = [SELF.adPlaylist midRollPlayBreaksWithTime:currentTime approximate:YES];
             NSCAssert([playBreaks count], @"No play breaks found for boundary time");
@@ -232,7 +232,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 
 - (void)startPlayBreaksFromQueue
 {
-    NSLog(@"startPlayBreaksFromQueue %@", self.playBreaksQueue);
+    VLogV(self.playBreaksQueue);
     
     if (self.didFinishPlayBreakRecently) {
         // previous ad break happened not long ago, skip this one
@@ -274,7 +274,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 
 - (void)finishCurrentPlayBreak
 {
-    NSLog(@"finishCurrentPlayBreak %@", self.currentPlayBreak);
+    VLogV(self.currentPlayBreak);
     
     self.currentPlayBreak = nil;
     [self startPlayBreaksFromQueue];
@@ -282,7 +282,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 
 - (void)startAdsFromQueue
 {
-    NSLog(@"startAdsFromQueue %@", self.adsQueue);
+    VLogV(self.adsQueue);
     
     if ([self.adsQueue count] > 0) {
         DVVideoAd *currentAd = [self.adsQueue objectAtIndex:0];
@@ -303,7 +303,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 
 - (void)playInlineAd:(DVInlineVideoAd *)videoAd
 {
-    NSLog(@"playInlineAd:%@", videoAd);
+    VLogV(videoAd);
     
     AVPlayerItem *playerItem = [[AVPlayerItem alloc] initWithURL:videoAd.mediaFileURL];
     
@@ -328,7 +328,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 - (void)inlineAdPlayerItemDidReachEnd:(NSNotification *)notification
 {
     AVPlayerItem *playerItem = [notification object];
-    NSLog(@"inlineAdPlayerItemDidReachEnd:%@", playerItem);
+    VLogV(playerItem);
     
     dispatch_async(dispatch_get_main_queue(), ^{
         [self finishCurrentInlineAd:playerItem];
@@ -338,7 +338,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 - (void)inlineAdPlayerItemDidFailToReachEnd:(NSNotification *)notification
 {
     AVPlayerItem *playerItem = [notification object];
-    NSLog(@"inlineAdPlayerItemDidFailToReachEnd:%@ userInfo:%@", playerItem, [notification userInfo]);
+    VLog(@"%@ userInfo:%@", playerItem, [notification userInfo]);
     
     dispatch_async(dispatch_get_main_queue(), ^{
         [self finishCurrentInlineAd:playerItem];
@@ -347,7 +347,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 
 - (void)finishCurrentInlineAd:(AVPlayerItem *)playerItem
 {
-    NSLog(@"finishCurrentInlineAd:%@", playerItem);
+    VLogV(playerItem);
     
     if (playerItem != nil) {
         [[NSNotificationCenter defaultCenter] removeObserver:self
@@ -376,7 +376,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 
 - (void)fetchPlayBreakAdTemplate:(DVVideoPlayBreak *)playBreak
 {
-    NSLog(@"fetchPlayBreakAdTemplate:%@", playBreak);
+    VLogV(playBreak);
     
     NSURLRequest *request = [NSURLRequest requestWithURL:playBreak.adServingTemplateURL
                                              cachePolicy:NSURLRequestReloadIgnoringCacheData
@@ -422,7 +422,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
-    NSLog(@"connectionDidFinishLoading:%@", [[NSString alloc] initWithData:self.adRequestData encoding:NSUTF8StringEncoding]);
+    VLog(@"%@", [[NSString alloc] initWithData:self.adRequestData encoding:NSUTF8StringEncoding]);
     
     NSError *error = nil;
     DVVideoAdServingTemplate *adTemplate = [[DVVideoAdServingTemplate alloc] initWithData:self.adRequestData error:&error];

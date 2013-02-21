@@ -98,7 +98,7 @@
             vastTagURI = [vastTagArray objectAtIndex:0];
         }
         ((DVWrapperVideoAd*)videoAd).URL = [NSURL URLWithString:[vastTagURI stringValue]];
-        DLogV(((DVWrapperVideoAd*)videoAd).URL);
+        VLogV(((DVWrapperVideoAd*)videoAd).URL);
         NSAssert(NO, @"Wrapper ads not implemented");
         return nil;
     }
