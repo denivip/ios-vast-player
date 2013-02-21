@@ -10,6 +10,7 @@
 #import "DVVideoAdServingTemplate+Parsing.h"
 #import "DVVideoAd.h"
 #import "DVInlineVideoAd.h"
+#import "DVWrapperVideoAd.h"
 
 
 #define AD_REQUEST_TIMEOUT_INTERVAL ((NSTimeInterval)5.f)
@@ -167,6 +168,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 
         dispatch_async(dispatch_get_main_queue(), ^{
             if (rate == 0) {
+                VLogV(self.playerLayer);
                 self.playerLayer.player = self.adPlayer;
                 [self.adPlayer play];
             }
@@ -290,8 +292,12 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 
         if ([currentAd isKindOfClass:[DVInlineVideoAd class]]) {
             [self playInlineAd:(DVInlineVideoAd *)currentAd];
-        }
-        else {
+        } else if ([currentAd isKindOfClass:[DVWrapperVideoAd class]]) {
+            // TODO: Find the "original" playBreak so we can start the ad at the right "moment" — for now simply going with a pre-roll version.
+            // We'd need to store a common reference in the DVVideoPlayBreak and DVWrapperVideoAd instances (URL, XMLDocument, some ID, ...) — Unsure which/how.
+            DVVideoPlayBreak *playBreak = [DVVideoPlayBreak playBreakBeforeStartWithAdTemplateURL:((DVWrapperVideoAd*)currentAd).URL];
+            [self fetchPlayBreakAdTemplate:playBreak];
+        } else {
             NSAssert(NO, @"Not supported");
             [self finishCurrentInlineAd:nil];
         }

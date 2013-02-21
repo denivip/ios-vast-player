@@ -99,8 +99,6 @@
         }
         ((DVWrapperVideoAd*)videoAd).URL = [NSURL URLWithString:[vastTagURI stringValue]];
         VLogV(((DVWrapperVideoAd*)videoAd).URL);
-        NSAssert(NO, @"Wrapper ads not implemented");
-        return nil;
     }
     else {
         if (error != nil) *error = [NSError errorWithDomain:DVVideoAdServingTemplateErrorDomain
@@ -147,6 +145,7 @@
         
         DDXMLElement *rootElement = [document rootElement];
         NSArray *adElements = [rootElement elementsForName:@"Ad"];
+        VLogV(adElements);
         for (DDXMLElement *adElement in adElements) {
             NSError *videoAdError = nil;
             DVVideoAd *videoAd = [self videoAdWithXMLElement:adElement error:&videoAdError];

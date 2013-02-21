@@ -13,5 +13,5 @@
     #import <Foundation/Foundation.h>
 #endif
 
-#define VAST_LOG 0
+#define VAST_LOG 1
 #import "DVLog.h"
