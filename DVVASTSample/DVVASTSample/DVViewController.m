@@ -107,6 +107,8 @@ static void *DVViewControllerPlayerItemStatusObservationContext = &DVViewControl
     [super viewDidLoad];
     
     self.player = [[DVIABPlayer alloc] init];
+    // Example of a specific HTTP Header you would want to pass to your server for capping reasons — uncomment to test ;)
+    // self.player.httpHeaders = @{@"User-Agent": @"Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)"};
     self.player.playerLayer = (AVPlayerLayer *)self.playerView.layer;
     ((AVPlayerLayer *)self.playerView.layer).player = self.player;
     

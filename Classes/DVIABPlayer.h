@@ -39,5 +39,6 @@ enum {
 @property (nonatomic, weak) id<DVIABPlayerDelegate> delegate;
 @property (nonatomic, strong) AVPlayerItem *contentPlayerItem; // main content player item as opposed to advertisement player items
 @property (nonatomic, strong) DVVideoMultipleAdPlaylist *adPlaylist;
+@property (nonatomic, strong) NSDictionary *httpHeaders;
 
 @end

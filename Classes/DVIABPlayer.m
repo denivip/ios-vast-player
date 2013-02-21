@@ -384,10 +384,16 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 {
     VLogV(playBreak);
     
-    NSURLRequest *request = [NSURLRequest requestWithURL:playBreak.adServingTemplateURL
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:playBreak.adServingTemplateURL
                                              cachePolicy:NSURLRequestReloadIgnoringCacheData
                                          timeoutInterval:AD_REQUEST_TIMEOUT_INTERVAL];
-    NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
+    
+    // Set HTTP Headers if any where passed.
+    for (NSString *field in _httpHeaders) {
+        [request setValue:_httpHeaders[field] forHTTPHeaderField:field];
+    }
+    
+    NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];    
     if (! connection) {
         if ([self.delegate respondsToSelector:@selector(player:didFailPlayBreak:withError:)]) {
             NSError *error = [NSError errorWithDomain:DVIABPlayerErrorDomain
