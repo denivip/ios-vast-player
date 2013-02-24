@@ -17,6 +17,7 @@
 
 - (BOOL)populateInlineVideoAd:(DVInlineVideoAd *)videoAd withXMLElement:(DDXMLElement *)element error:(NSError **)error
 {
+    videoAd.playMediaFile = YES;
     videoAd.system = [[[element elementsForName:@"AdSystem"] objectAtIndex:0] stringValue];
     videoAd.title = [[[element elementsForName:@"AdSystem"] objectAtIndex:0] stringValue];
     
@@ -58,7 +59,17 @@
     urls = [mediaFile elementsForName:@"URL"];
     DDXMLDocument *url = urls && urls.count ? [urls objectAtIndex:0] : mediaFile;
     videoAd.mediaFileURL = [NSURL URLWithString:[url stringValue]];
-    
+
+    // Looking for the <Fallback> tag that will tell me not to play this media.
+    NSArray *extensions = [element elementsForName:@"Extensions"];
+    if (extensions && extensions.count) {
+        NSArray *extension = [[extensions objectAtIndex:0] elementsForName:@"Extension"];
+        if (extension && extension.count) {
+            NSArray *fallback = [[extension objectAtIndex:0] elementsForName:@"Fallback"];
+            videoAd.playMediaFile = !fallback || !fallback.count;
+        }
+    }
+
     return YES;
 }
 

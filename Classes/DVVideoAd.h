@@ -12,5 +12,6 @@
 @interface DVVideoAd : NSObject
 
 @property (nonatomic, copy) NSString *identifier;
+@property BOOL playMediaFile;
 
 @end

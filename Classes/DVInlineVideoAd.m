@@ -21,8 +21,8 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"%@ %@ %@", [super description],
-            self.identifier, self.mediaFileURL];
+    return [NSString stringWithFormat:@"%@ id:%@ url:%@ play:%d", [super description],
+            self.identifier, self.mediaFileURL, self.playMediaFile];
 }
 
 @end
