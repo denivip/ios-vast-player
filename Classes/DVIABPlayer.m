@@ -39,7 +39,6 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 @property (nonatomic) BOOL didFinishPlayBreakRecently;
 
 - (void)startPlayBreaksFromQueue;
-- (void)finishPlayBreaksQueue;
 - (void)finishCurrentPlayBreak;
 - (void)fetchPlayBreakAdTemplate:(DVVideoPlayBreak *)playBreak;
 - (void)startAdsFromQueue;
@@ -265,13 +264,11 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 - (void)finishPlayBreaksQueue
 {
     self.didFinishPlayBreakRecently = YES;
-    if (self.contentPlayerItem.status == AVPlayerItemStatusReadyToPlay) {
-        self.playerLayer.player = self;
-        self.adPlayer = nil;
-        
-        if (! self.contentPlayerItemDidReachEnd) {
-            [self play];
-        }
+    self.playerLayer.player = self;
+    self.adPlayer = nil;
+    
+    if (! self.contentPlayerItemDidReachEnd) {
+        [self play];
     }
 }
 

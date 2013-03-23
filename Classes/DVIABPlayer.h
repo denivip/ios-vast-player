@@ -41,4 +41,6 @@ enum {
 @property (nonatomic, strong) DVVideoMultipleAdPlaylist *adPlaylist;
 @property (nonatomic, strong) NSDictionary *httpHeaders;
 
+- (void)finishPlayBreaksQueue;
+
 @end
