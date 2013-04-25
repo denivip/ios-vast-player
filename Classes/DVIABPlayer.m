@@ -38,6 +38,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 @property (nonatomic) BOOL contentPlayerItemDidReachEnd;
 @property (nonatomic) BOOL didFinishPlayBreakRecently;
 
+
 - (void)startPlayBreaksFromQueue;
 - (void)finishCurrentPlayBreak;
 - (void)fetchPlayBreakAdTemplate:(DVVideoPlayBreak *)playBreak;
@@ -49,6 +50,8 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 
 
 @implementation DVIABPlayer
+
+@synthesize currentAd = _currentAd;
 
 - (id)init
 {
@@ -129,6 +132,10 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
             switch (status) {
                 case AVPlayerItemStatusReadyToPlay:
                     self.playerLayer.player = self.adPlayer;
+                    if ([self.currentAd isKindOfClass:[DVInlineVideoAd class]]) {
+                        DVInlineVideoAd *videoAd = (DVInlineVideoAd*)self.currentAd;
+                        [videoAd trackImpressions];
+                    }
                     [self.adPlayer play];
                     break;
                     
@@ -285,16 +292,16 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
     VLogV(self.adsQueue);
     
     if ([self.adsQueue count] > 0) {
-        DVVideoAd *currentAd = [self.adsQueue objectAtIndex:0];
+        _currentAd = [self.adsQueue objectAtIndex:0];
         [self.adsQueue removeObjectAtIndex:0];
         
-        if (currentAd.playMediaFile) {
-            if ([currentAd isKindOfClass:[DVInlineVideoAd class]]) {
-                [self playInlineAd:(DVInlineVideoAd *)currentAd];
-            } else if ([currentAd isKindOfClass:[DVWrapperVideoAd class]]) {
+        if (_currentAd.playMediaFile) {
+            if ([_currentAd isKindOfClass:[DVInlineVideoAd class]]) {
+                [self playInlineAd:(DVInlineVideoAd *)_currentAd];
+            } else if ([_currentAd isKindOfClass:[DVWrapperVideoAd class]]) {
                 // TODO: Find the "original" playBreak so we can start the ad at the right "moment" — for now simply going with a pre-roll version.
                 // We'd need to store a common reference in the DVVideoPlayBreak and DVWrapperVideoAd instances (URL, XMLDocument, some ID, ...) — Unsure which/how.
-                DVVideoPlayBreak *playBreak = [DVVideoPlayBreak playBreakBeforeStartWithAdTemplateURL:((DVWrapperVideoAd*)currentAd).URL];
+                DVVideoPlayBreak *playBreak = [DVVideoPlayBreak playBreakBeforeStartWithAdTemplateURL:((DVWrapperVideoAd*)_currentAd).URL];
                 [self fetchPlayBreakAdTemplate:playBreak];
             } else {
                 NSAssert(NO, @"Not supported");

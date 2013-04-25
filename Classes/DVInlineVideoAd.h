@@ -21,4 +21,6 @@
 @property (nonatomic) NSTimeInterval duration;
 @property (nonatomic, copy) NSURL *mediaFileURL;
 
+- (void)trackImpressions;
+
 @end

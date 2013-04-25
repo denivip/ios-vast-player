@@ -10,7 +10,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import "DVVideoMultipleAdPlaylist.h"
 #import "DVVideoPlayBreak.h"
-
+#import "DVVideoAd.h"
 
 extern NSString *const DVIABPlayerErrorDomain;
 
@@ -40,6 +40,7 @@ enum {
 @property (nonatomic, strong) AVPlayerItem *contentPlayerItem; // main content player item as opposed to advertisement player items
 @property (nonatomic, strong) DVVideoMultipleAdPlaylist *adPlaylist;
 @property (nonatomic, strong) NSDictionary *httpHeaders;
+@property (nonatomic, strong, readonly) DVVideoAd *currentAd;
 
 - (void)finishPlayBreaksQueue;
 

@@ -26,4 +26,22 @@
             self.identifier, self.mediaFileURL, self.playMediaFile];
 }
 
+- (void)trackImpressions
+{
+    // Trigger those babies, async of course!
+    VLogV(self.impressionURLs);
+    [self.impressionURLs enumerateObjectsUsingBlock:^(NSURL *url, NSUInteger idx, BOOL *stop) {
+        VLogV(url);
+        NSURLRequest *request = [NSURLRequest requestWithURL:url];
+        [NSURLConnection sendAsynchronousRequest:request
+                                           queue:[[NSOperationQueue alloc] init]
+                               completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+            VLogV(response.URL);
+            if (error) {
+                VLogV(error);
+            }
+        }];
+    }];
+}
+
 @end
