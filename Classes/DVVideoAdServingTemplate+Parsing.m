@@ -23,8 +23,23 @@
     
     DDXMLElement *impressionElement = [[element elementsForName:@"Impression"] objectAtIndex:0];
     NSArray *urls = [impressionElement elementsForName:@"URL"];
-    NSString *impressionString = urls && urls.count ? [[urls objectAtIndex:0] stringValue] : [impressionElement stringValue];
-    videoAd.impressionURL = [NSURL URLWithString:impressionString];
+    NSMutableArray *impressionURLs = [NSMutableArray array];
+    if (urls && urls.count) {
+        // VAST 2 — Multiple <Impression> elements
+        [urls enumerateObjectsUsingBlock:^(DDXMLElement *impressionElement, NSUInteger idx, BOOL *stop) {
+            [self addURLElement:impressionElement toArray:impressionURLs];
+        }];
+    } else {
+        // VAST 1 — Only one <Impression> element
+        [self addURLElement:impressionElement toArray:impressionURLs];
+    }
+    VLogV(impressionURLs);
+    videoAd.impressionURLs = impressionURLs;
+    if (impressionURLs.count) {
+        // For compatibility sake (code using this VAST 1 accessor)
+        videoAd.impressionURL =  impressionURLs[0];
+    }
+    VLogV(videoAd.impressionURLs);
     
     NSArray *videos = [element elementsForName:@"Video"];
     DDXMLElement *videoElement = nil;
@@ -71,6 +86,15 @@
     }
 
     return YES;
+}
+
+- (void)addURLElement:(DDXMLElement*)element toArray:(NSMutableArray*)array
+{
+    NSURL *url = [NSURL URLWithString:[element stringValue]];
+    VLogV(url);
+    if (url) {
+        [array addObject:url];
+    }
 }
 
 - (DVVideoAd *)videoAdWithXMLElement:(DDXMLElement *)element error:(NSError **)error

@@ -14,6 +14,7 @@
 @synthesize system = _system;
 @synthesize title = _title;
 @synthesize impressionURL = _impressionURL;
+@synthesize impressionURLs = _impressionsURL;
 @synthesize clickThroughURL = _clickThroughURL;
 @synthesize clickTrackingURL = _clickTrackingURL;
 @synthesize duration = _duration;
