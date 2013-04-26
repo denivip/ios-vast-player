@@ -2,15 +2,16 @@
 //  DVWrapperVideoAd.h
 //  DVVASTSample
 //
-//  Created by Nikolay Morev on 8/7/12.
+//  Created by Manuel "StuFF mc" Carrasco Molina in 2013 — https://github.com/stuffmc/ios-vast-player/tree/dev
 //  Copyright (c) 2012 DENIVIP Media. All rights reserved.
 //
 
-#import "DVVideoAd.h"
+#import "DVInlineVideoAd.h"
 
 
-@interface DVWrapperVideoAd : DVVideoAd
+@interface DVWrapperVideoAd : DVInlineVideoAd
 
 @property (nonatomic, copy) NSURL *URL;
+@property (nonatomic, strong, readonly) DVVideoPlayBreak *videoPlayBreak;
 
 @end

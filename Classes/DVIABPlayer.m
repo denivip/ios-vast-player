@@ -10,6 +10,7 @@
 #import "DVVideoAdServingTemplate+Parsing.h"
 #import "DVVideoAd.h"
 #import "DVInlineVideoAd.h"
+#import "DVWrapperVideoAd.h"
 
 
 #define AD_REQUEST_TIMEOUT_INTERVAL ((NSTimeInterval)5.f)
@@ -28,17 +29,18 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 @property (nonatomic, strong) AVPlayer *adPlayer;
 
 @property (nonatomic, strong) id playBreaksTimeObserver;
+@property (nonatomic, strong) id periodicAdTimeObserver;
 @property (nonatomic, strong) id periodicTimeObserver;
 @property (nonatomic, strong) NSMutableArray *playBreaksQueue;
 @property (nonatomic, strong) DVVideoPlayBreak *currentPlayBreak;
 @property (nonatomic, strong) NSMutableData *adRequestData;
 @property (nonatomic, strong) NSMutableArray *adsQueue;
 @property (nonatomic, strong) AVPlayerItem *currentInlineAdPlayerItem;
-@property (nonatomic) BOOL contentPlayerItemDidReachEnd;
-@property (nonatomic) BOOL didFinishPlayBreakRecently;
+@property (nonatomic) BOOL contentPlayerItemDidReachEnd, didFinishPlayBreakRecently, firstQuartile, midpoint, thirdQuartile;
+@property (nonatomic, strong, readonly) DVInlineVideoAd *currentInlineAd;
+@property (nonatomic, strong) DVWrapperVideoAd *wrapper;
 
 - (void)startPlayBreaksFromQueue;
-- (void)finishPlayBreaksQueue;
 - (void)finishCurrentPlayBreak;
 - (void)fetchPlayBreakAdTemplate:(DVVideoPlayBreak *)playBreak;
 - (void)startAdsFromQueue;
@@ -48,7 +50,11 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 @end
 
 
-@implementation DVIABPlayer
+@implementation DVIABPlayer {
+    BOOL paused;
+}
+
+@synthesize currentAd = _currentAd;
 
 - (id)init
 {
@@ -59,6 +65,15 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
                   context:DVIABContentPlayerRateObservationContext];
     }
     return self;
+}
+
+- (DVInlineVideoAd*)currentInlineAd
+{
+    if ([self.currentAd isKindOfClass:[DVInlineVideoAd class]]) {
+        return (DVInlineVideoAd*)self.currentAd;
+    } else {
+        return nil;
+    }
 }
 
 @synthesize adPlayer = _adPlayer;
@@ -107,7 +122,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 
 - (void)contentPlayerItemDidReachEnd:(NSNotification *)notification
 {
-    NSLog(@"contentPlayerItemDidReachEnd:");
+    VLogC();
     
     dispatch_async(dispatch_get_main_queue(), ^{
         if (! self.contentPlayerItemDidReachEnd) {
@@ -123,17 +138,19 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 {
     if (context == DVIABPlayerInlineAdPlayerItemStatusObservationContext) {
         AVPlayerItemStatus status = [[change objectForKey:NSKeyValueChangeNewKey] integerValue];
-        NSLog(@"DVIABPlayerInlineAdPlayerItemStatusObservationContext %i", status);
+        VLog(@"DVIABPlayerInlineAdPlayerItemStatusObservationContext %i", status);
         
         dispatch_async(dispatch_get_main_queue(), ^{
             switch (status) {
                 case AVPlayerItemStatusReadyToPlay:
                     self.playerLayer.player = self.adPlayer;
+                    [self.currentInlineAd trackEvent:@"start"];
+                    [self.currentInlineAd trackImpressions];
                     [self.adPlayer play];
                     break;
                     
                 case AVPlayerItemStatusFailed:
-                    NSLog(@"AVPlayerItemStatusFailed %@", self.currentInlineAdPlayerItem.error);
+                    VLog(@"AVPlayerItemStatusFailed %@", self.currentInlineAdPlayerItem.error);
                     [self finishCurrentInlineAd:self.currentInlineAdPlayerItem];
                     break;
                     
@@ -144,7 +161,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
     }
     else if (context == DVIABContentPlayerRateObservationContext) {
         float rate = [[change objectForKey:NSKeyValueChangeNewKey] floatValue];
-        NSLog(@"DVIABPlayerRateObservationContext %@ %f", self.currentItem, rate);
+        VLog(@"DVIABPlayerRateObservationContext %@ %f", self.currentItem, rate);
         
         dispatch_async(dispatch_get_main_queue(), ^{
             if (rate > 0) {
@@ -163,13 +180,15 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
         // In this case we need to call play.
         
         float rate = [[change objectForKey:NSKeyValueChangeNewKey] floatValue];
-        NSLog(@"DVIABPlayerRateObservationContext %@ %f", self.currentItem, rate);
+        VLog(@"DVIABPlayerRateObservationContext %@ %f", self.currentItem, rate);
 
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (rate == 0) {
+            if (rate == 0 && !paused) {
+                VLogV(self.playerLayer);
                 self.playerLayer.player = self.adPlayer;
                 [self.adPlayer play];
             }
+            paused = NO;
         });
     }
     else {
@@ -185,6 +204,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
     if (adPlaylist == nil && self.playBreaksTimeObserver != nil) {
         [self removeTimeObserver:self.playBreaksTimeObserver];
         [self removeTimeObserver:self.periodicTimeObserver];
+        [self removeTimeObserver:self.periodicAdTimeObserver];
         self.playBreaksTimeObserver = nil;
     }
     
@@ -194,31 +214,33 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
         NSMutableArray *boundaryTimes = [NSMutableArray array];
         [boundaryTimes addObjectsFromArray:[[_adPlaylist midRollTimes] mutableCopy]];
         
-        NSLog(@"%@", boundaryTimes);
+        VLogV(boundaryTimes);
         
-        id __block player = self;
-        __block DVIABPlayer *SELF = self;
-        self.playBreaksTimeObserver = [self addBoundaryTimeObserverForTimes:boundaryTimes queue:NULL usingBlock:^{
-            if (SELF.currentItem != SELF.contentPlayerItem) {
-                return;
-            }
-            
-            CMTime currentTime = SELF.currentTime;
-            NSLog(@"playBreaksTimeObserver %@", CMTimeCopyDescription(nil, currentTime));
-            
-            NSArray *playBreaks = [SELF.adPlaylist midRollPlayBreaksWithTime:currentTime approximate:YES];
-            NSCAssert([playBreaks count], @"No play breaks found for boundary time");
-            SELF.playBreaksQueue = [playBreaks mutableCopy];
-            [player startPlayBreaksFromQueue];
-        }];
+        DVIABPlayer* __block player = self;
+        if (boundaryTimes && boundaryTimes.count) {
+            self.playBreaksTimeObserver = [self addBoundaryTimeObserverForTimes:boundaryTimes queue:NULL usingBlock:^{
+                if (player.currentItem != player.contentPlayerItem) {
+                    return;
+                }
+                
+                CMTime currentTime = player.currentTime;
+                VLog(@"playBreaksTimeObserver %@", CMTimeCopyDescription(nil, currentTime));
+                
+                NSArray *playBreaks = [player.adPlaylist midRollPlayBreaksWithTime:currentTime approximate:YES];
+                NSCAssert([playBreaks count], @"No play breaks found for boundary time");
+                player.playBreaksQueue = [playBreaks mutableCopy];
+                [player startPlayBreaksFromQueue];
+            }];
+        }
         
         __block CMTime previousTime = kCMTimeNegativeInfinity;
         self.periodicTimeObserver = [self addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(AD_PLAY_BREAK_MIN_INTERVAL_BETWEEN, 1) queue:NULL usingBlock:^(CMTime time) {
-            if (SELF.currentItem == SELF.contentPlayerItem &&
+//            VLogI((int)time.value);
+            if (player.currentItem == player.contentPlayerItem &&
                 CMTimeCompare(CMTimeMakeWithSeconds(AD_PLAY_BREAK_MIN_INTERVAL_BETWEEN, 1),
                               CMTimeAbsoluteValue(CMTimeSubtract(previousTime, time))) == -1) {
                     previousTime = time;
-                    SELF.didFinishPlayBreakRecently = NO;
+                    player.didFinishPlayBreakRecently = NO;
                 }
         }];
     }
@@ -232,7 +254,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 
 - (void)startPlayBreaksFromQueue
 {
-    NSLog(@"startPlayBreaksFromQueue %@", self.playBreaksQueue);
+    VLogV(self.playBreaksQueue);
     
     if (self.didFinishPlayBreakRecently) {
         // previous ad break happened not long ago, skip this one
@@ -262,19 +284,17 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 - (void)finishPlayBreaksQueue
 {
     self.didFinishPlayBreakRecently = YES;
-    if (self.contentPlayerItem.status == AVPlayerItemStatusReadyToPlay) {
-        self.playerLayer.player = self;
-        self.adPlayer = nil;
-        
-        if (! self.contentPlayerItemDidReachEnd) {
-            [self play];
-        }
+    self.playerLayer.player = self;
+    self.adPlayer = nil;
+    
+    if (! self.contentPlayerItemDidReachEnd) {
+        [self play];
     }
 }
 
 - (void)finishCurrentPlayBreak
 {
-    NSLog(@"finishCurrentPlayBreak %@", self.currentPlayBreak);
+    VLogV(self.currentPlayBreak);
     
     self.currentPlayBreak = nil;
     [self startPlayBreaksFromQueue];
@@ -282,17 +302,20 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 
 - (void)startAdsFromQueue
 {
-    NSLog(@"startAdsFromQueue %@", self.adsQueue);
+    VLogV(self.adsQueue);
     
     if ([self.adsQueue count] > 0) {
-        DVVideoAd *currentAd = [self.adsQueue objectAtIndex:0];
+        _currentAd = [self.adsQueue objectAtIndex:0];
         [self.adsQueue removeObjectAtIndex:0];
-
-        if ([currentAd isKindOfClass:[DVInlineVideoAd class]]) {
-            [self playInlineAd:(DVInlineVideoAd *)currentAd];
-        }
-        else {
-            NSAssert(NO, @"Not supported");
+        
+        if (_currentAd.playMediaFile) {
+            if (self.currentInlineAd) {
+                [self playInlineAd:self.currentInlineAd];
+            } else {
+                NSAssert(NO, @"Not supported");
+                [self finishCurrentInlineAd:nil];
+            }
+        } else {
             [self finishCurrentInlineAd:nil];
         }
     }
@@ -303,7 +326,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 
 - (void)playInlineAd:(DVInlineVideoAd *)videoAd
 {
-    NSLog(@"playInlineAd:%@", videoAd);
+    VLogV(videoAd);
     
     AVPlayerItem *playerItem = [[AVPlayerItem alloc] initWithURL:videoAd.mediaFileURL];
     
@@ -323,12 +346,42 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
     self.currentInlineAdPlayerItem = playerItem;
     
     self.adPlayer = [[AVPlayer alloc] initWithPlayerItem:playerItem];
+    Float64 duration = CMTimeGetSeconds(playerItem.duration);
+//    VLogF(duration);
+    typeof(self) SELF = self;
+    self.firstQuartile = self.midpoint = self.thirdQuartile = NO;
+    self.periodicAdTimeObserver = [self.adPlayer addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(1, 1) queue:NULL usingBlock:^(CMTime time) {
+        Float64 current = CMTimeGetSeconds(time)/duration;
+        if (current >= .25 && !SELF.firstQuartile) {
+            SELF.firstQuartile = YES;
+            [SELF.currentInlineAd trackEvent:@"firstQuartile"];
+        }
+        if (current >= .5 && !SELF.midpoint) {
+            SELF.midpoint = YES;
+            [SELF.currentInlineAd trackEvent:@"midpoint"];
+        }
+        if (current >= .75 && !SELF.thirdQuartile) {
+            SELF.thirdQuartile = YES;
+            [SELF.currentInlineAd trackEvent:@"thirdQuartile"];
+        }
+//        VLogF(current);
+    }];
+    
+    // Other TrackingEvents (Not Implemented)
+    // ——————————————————————————————————————
+    // fullscreen
+    // mute
+    // unmute
+    // expand
+    // collapse
+    // acceptInvitation
+    // close
 }
 
 - (void)inlineAdPlayerItemDidReachEnd:(NSNotification *)notification
 {
     AVPlayerItem *playerItem = [notification object];
-    NSLog(@"inlineAdPlayerItemDidReachEnd:%@", playerItem);
+    VLogV(playerItem);
     
     dispatch_async(dispatch_get_main_queue(), ^{
         [self finishCurrentInlineAd:playerItem];
@@ -338,7 +391,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 - (void)inlineAdPlayerItemDidFailToReachEnd:(NSNotification *)notification
 {
     AVPlayerItem *playerItem = [notification object];
-    NSLog(@"inlineAdPlayerItemDidFailToReachEnd:%@ userInfo:%@", playerItem, [notification userInfo]);
+    VLog(@"%@ userInfo:%@", playerItem, [notification userInfo]);
     
     dispatch_async(dispatch_get_main_queue(), ^{
         [self finishCurrentInlineAd:playerItem];
@@ -347,8 +400,10 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 
 - (void)finishCurrentInlineAd:(AVPlayerItem *)playerItem
 {
-    NSLog(@"finishCurrentInlineAd:%@", playerItem);
-    
+    VLogV(playerItem);
+
+    [self.currentInlineAd trackEvent:@"complete"];
+
     if (playerItem != nil) {
         [[NSNotificationCenter defaultCenter] removeObserver:self
                                                         name:AVPlayerItemDidPlayToEndTimeNotification
@@ -361,6 +416,26 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
     }
     
     [self startAdsFromQueue];
+}
+
+- (void)pause
+{
+    if (self.adPlayer) {
+        paused = YES;
+        [self.currentInlineAd trackEvent:@"pause"];
+        [self.adPlayer pause];
+    } else {
+        [super pause];
+    }
+}
+
+- (void)play
+{
+    if (self.adPlayer) {
+        [self.adPlayer play];
+    } else {
+        [super play];
+    }
 }
 
 - (void)dealloc
@@ -376,12 +451,18 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 
 - (void)fetchPlayBreakAdTemplate:(DVVideoPlayBreak *)playBreak
 {
-    NSLog(@"fetchPlayBreakAdTemplate:%@", playBreak);
+    VLogV(playBreak);
     
-    NSURLRequest *request = [NSURLRequest requestWithURL:playBreak.adServingTemplateURL
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:playBreak.adServingTemplateURL
                                              cachePolicy:NSURLRequestReloadIgnoringCacheData
                                          timeoutInterval:AD_REQUEST_TIMEOUT_INTERVAL];
-    NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
+    
+    // Set HTTP Headers if any where passed.
+    for (NSString *field in _httpHeaders) {
+        [request setValue:_httpHeaders[field] forHTTPHeaderField:field];
+    }
+    
+    NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];    
     if (! connection) {
         if ([self.delegate respondsToSelector:@selector(player:didFailPlayBreak:withError:)]) {
             NSError *error = [NSError errorWithDomain:DVIABPlayerErrorDomain
@@ -422,7 +503,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
-    NSLog(@"connectionDidFinishLoading:%@", [[NSString alloc] initWithData:self.adRequestData encoding:NSUTF8StringEncoding]);
+    VLog(@"%@", [[NSString alloc] initWithData:self.adRequestData encoding:NSUTF8StringEncoding]);
     
     NSError *error = nil;
     DVVideoAdServingTemplate *adTemplate = [[DVVideoAdServingTemplate alloc] initWithData:self.adRequestData error:&error];
@@ -436,8 +517,40 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
         return;
     }
     
-    self.adsQueue = [adTemplate.ads mutableCopy];
-    [self startAdsFromQueue];
+    VLogV(adTemplate.ads);
+    
+    if ((adTemplate.ads.count && [adTemplate.ads[0] isKindOfClass:[DVWrapperVideoAd class]]) || self.wrapper) {
+        if (!self.wrapper) {
+            self.wrapper = (DVWrapperVideoAd*)adTemplate.ads[0];
+        }
+        if (!self.adsQueue) { // adTemplate.ads.count && adTemplate.ads[0] == wrapper
+            // Supercharge with the inline ad.
+            self.adsQueue = [adTemplate.ads mutableCopy];
+            [self fetchPlayBreakAdTemplate:_wrapper.videoPlayBreak];
+        } else {
+            // Probably means we've supercharged and we're ready to go!
+            // TODO: We should move this in DVVideoAdServingTemplate
+            NSArray *adElements = [adTemplate.document.rootElement elementsForName:@"Ad"];
+            VLogV(adElements);
+            for (DDXMLElement *adElement in adElements) {
+                DDXMLElement *adContents = (DDXMLElement *)[adElement childAtIndex:0];
+                NSString *adContentsName = [adContents name];
+                if ([adContentsName isEqualToString:@"InLine"]) {
+                    NSError *error = nil;
+                    [adTemplate populateInlineVideoAd:_wrapper withXMLElement:adContents error:&error];
+                    if (error) {
+                        VLogV(error);
+                    }
+                }
+            }
+            self.adsQueue = [@[_wrapper] mutableCopy];
+            [self startAdsFromQueue];
+        }
+    } else {
+        // Simply play the inline ad.
+        self.adsQueue = [adTemplate.ads mutableCopy];
+        [self startAdsFromQueue];
+    }
 }
 
 @end

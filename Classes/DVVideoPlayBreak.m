@@ -63,7 +63,11 @@
             time = @"post-roll";
             break;
         case DVVideoPlayBreakTimeOffsetFromStart:
-            time = [NSString stringWithFormat:@"@%@", CMTimeCopyDescription(nil, self.timeFromStart)];
+        {
+            CFStringRef timeDescription = CMTimeCopyDescription(nil, self.timeFromStart);
+            time = [NSString stringWithFormat:@"@%@", timeDescription];
+            CFRelease(timeDescription);
+        }
             break;
 
         case DVVideoPlayBreakTimeOffsetPercentage:
