@@ -29,6 +29,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 @property (nonatomic, strong) AVPlayer *adPlayer;
 
 @property (nonatomic, strong) id playBreaksTimeObserver;
+@property (nonatomic, strong) id periodicAdTimeObserver;
 @property (nonatomic, strong) id periodicTimeObserver;
 @property (nonatomic, strong) NSMutableArray *playBreaksQueue;
 @property (nonatomic, strong) DVVideoPlayBreak *currentPlayBreak;
@@ -37,7 +38,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 @property (nonatomic, strong) AVPlayerItem *currentInlineAdPlayerItem;
 @property (nonatomic) BOOL contentPlayerItemDidReachEnd;
 @property (nonatomic) BOOL didFinishPlayBreakRecently;
-
+@property (nonatomic, strong, readonly) DVInlineVideoAd *currentInlineAd;
 
 - (void)startPlayBreaksFromQueue;
 - (void)finishCurrentPlayBreak;
@@ -64,6 +65,15 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
                   context:DVIABContentPlayerRateObservationContext];
     }
     return self;
+}
+
+- (DVInlineVideoAd*)currentInlineAd
+{
+    if ([self.currentAd isKindOfClass:[DVInlineVideoAd class]]) {
+        return (DVInlineVideoAd*)self.currentAd;
+    } else {
+        return nil;
+    }
 }
 
 @synthesize adPlayer = _adPlayer;
@@ -134,10 +144,8 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
             switch (status) {
                 case AVPlayerItemStatusReadyToPlay:
                     self.playerLayer.player = self.adPlayer;
-                    if ([self.currentAd isKindOfClass:[DVInlineVideoAd class]]) {
-                        DVInlineVideoAd *videoAd = (DVInlineVideoAd*)self.currentAd;
-                        [videoAd trackImpressions];
-                    }
+                    [self.currentInlineAd trackEvent:@"start"];
+                    [self.currentInlineAd trackImpressions];
                     [self.adPlayer play];
                     break;
                     
@@ -196,6 +204,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
     if (adPlaylist == nil && self.playBreaksTimeObserver != nil) {
         [self removeTimeObserver:self.playBreaksTimeObserver];
         [self removeTimeObserver:self.periodicTimeObserver];
+        [self removeTimeObserver:self.periodicAdTimeObserver];
         self.playBreaksTimeObserver = nil;
     }
     
@@ -226,6 +235,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
         
         __block CMTime previousTime = kCMTimeNegativeInfinity;
         self.periodicTimeObserver = [self addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(AD_PLAY_BREAK_MIN_INTERVAL_BETWEEN, 1) queue:NULL usingBlock:^(CMTime time) {
+            VLogI((int)time.value);
             if (player.currentItem == player.contentPlayerItem &&
                 CMTimeCompare(CMTimeMakeWithSeconds(AD_PLAY_BREAK_MIN_INTERVAL_BETWEEN, 1),
                               CMTimeAbsoluteValue(CMTimeSubtract(previousTime, time))) == -1) {
@@ -299,8 +309,8 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
         [self.adsQueue removeObjectAtIndex:0];
         
         if (_currentAd.playMediaFile) {
-            if ([_currentAd isKindOfClass:[DVInlineVideoAd class]]) {
-                [self playInlineAd:(DVInlineVideoAd *)_currentAd];
+            if (self.currentInlineAd) {
+                [self playInlineAd:self.currentInlineAd];
             } else if ([_currentAd isKindOfClass:[DVWrapperVideoAd class]]) {
                 // TODO: Find the "original" playBreak so we can start the ad at the right "moment" — for now simply going with a pre-roll version.
                 // We'd need to store a common reference in the DVVideoPlayBreak and DVWrapperVideoAd instances (URL, XMLDocument, some ID, ...) — Unsure which/how.
@@ -341,6 +351,40 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
     self.currentInlineAdPlayerItem = playerItem;
     
     self.adPlayer = [[AVPlayer alloc] initWithPlayerItem:playerItem];
+    Float64 duration = CMTimeGetSeconds(playerItem.duration);
+    VLogF(duration);
+    typeof(self) SELF = self;
+    self.periodicAdTimeObserver = [self.adPlayer addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(1, 1) queue:NULL usingBlock:^(CMTime time) {
+        Float64 current = CMTimeGetSeconds(time);
+        NSUInteger progress = current/duration*100;
+        switch (progress) {
+            case 25:
+                [SELF.currentInlineAd trackEvent:@"firstQuartile"];
+                break;
+                
+            case 50:
+                [SELF.currentInlineAd trackEvent:@"midpoint"];
+                break;
+                
+            case 75:
+                [SELF.currentInlineAd trackEvent:@"thirdQuartile"];
+                break;
+
+            default:
+                break;
+        }
+        VLogF(current);
+    }];
+    
+    // Other TrackingEvents (Not Implemented)
+    // ——————————————————————————————————————
+    // fullscreen
+    // mute
+    // unmute
+    // expand
+    // collapse
+    // acceptInvitation
+    // close
 }
 
 - (void)inlineAdPlayerItemDidReachEnd:(NSNotification *)notification
@@ -366,7 +410,9 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 - (void)finishCurrentInlineAd:(AVPlayerItem *)playerItem
 {
     VLogV(playerItem);
-    
+
+    [self.currentInlineAd trackEvent:@"complete"];
+
     if (playerItem != nil) {
         [[NSNotificationCenter defaultCenter] removeObserver:self
                                                         name:AVPlayerItemDidPlayToEndTimeNotification
@@ -385,6 +431,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 {
     if (self.adPlayer) {
         paused = YES;
+        [self.currentInlineAd trackEvent:@"pause"];
         [self.adPlayer pause];
     } else {
         [super pause];

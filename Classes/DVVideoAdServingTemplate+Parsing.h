@@ -9,6 +9,11 @@
 #import "DVVideoAdServingTemplate.h"
 #import "DDXML.h"
 
+@interface DDXMLElement (VAST)
+
+@property (nonatomic, readonly) BOOL isEmpty;
+
+@end
 
 @interface DVVideoAdServingTemplate (Parsing)
 

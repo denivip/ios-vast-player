@@ -18,10 +18,12 @@
 @property (nonatomic, copy) NSURL *clickThroughURL;
 @property (nonatomic, copy) NSArray *clickTrackingURLs; // Multiple <ClickTracking> elements
 @property (nonatomic, copy) NSURL *clickTrackingURL;    // For compatibility sake (code using ios-vast-player's "single" clickTrackingURL)
+@property (nonatomic, copy) NSDictionary *trackingEvents;
 
 @property (nonatomic) NSTimeInterval duration;
 @property (nonatomic, copy) NSURL *mediaFileURL;
 
 - (void)trackImpressions;
+- (void)trackEvent:(NSString*)event;
 
 @end

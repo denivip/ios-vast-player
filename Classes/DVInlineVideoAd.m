@@ -17,6 +17,7 @@
 @synthesize impressionURLs = _impressionsURL;
 @synthesize clickThroughURL = _clickThroughURL;
 @synthesize clickTrackingURL = _clickTrackingURL;
+@synthesize trackingEvents = _trackingEvents;
 @synthesize duration = _duration;
 @synthesize mediaFileURL = _mediaFileURL;
 
@@ -31,17 +32,22 @@
     // Trigger those babies, async of course!
     VLogV(self.impressionURLs);
     [self.impressionURLs enumerateObjectsUsingBlock:^(NSURL *url, NSUInteger idx, BOOL *stop) {
-        VLogV(url);
-        NSURLRequest *request = [NSURLRequest requestWithURL:url];
-        [NSURLConnection sendAsynchronousRequest:request
-                                           queue:[[NSOperationQueue alloc] init]
-                               completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-            VLogV(response.URL);
-            if (error) {
-                VLogV(error);
-            }
-        }];
+        DLogV(url);
+        [self sendAsynchronousRequest:url context:@"trackImpressions"];
     }];
+}
+
+- (void)trackEvent:(NSString*)event
+{
+    if ([self.trackingEvents[event] isKindOfClass:[NSDictionary class]]) { // Should be.
+        NSDictionary *dictionary = (NSDictionary*)self.trackingEvents[event];
+        [dictionary enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSURL *url, BOOL *stop) {
+            VLogV(key);
+            VLogV(url);
+            NSString *context = [NSString stringWithFormat:@"trackEvent: %@", event];
+            [self sendAsynchronousRequest:url context:context];
+        }];
+    }
 }
 
 @end

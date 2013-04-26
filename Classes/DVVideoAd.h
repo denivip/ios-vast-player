@@ -14,4 +14,6 @@
 @property (nonatomic, copy) NSString *identifier;
 @property BOOL playMediaFile;
 
+- (void)sendAsynchronousRequest:(NSURL*)url context:(NSString*)context;
+
 @end

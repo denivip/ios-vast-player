@@ -11,6 +11,16 @@
 #import "DVInlineVideoAd.h"
 #import "DVWrapperVideoAd.h"
 #import "DVTimeIntervalFormatter.h"
+#import "NSString+DDXML.h"
+
+@implementation DDXMLElement (VAST)
+
+- (BOOL)isEmpty
+{
+    return !self.stringValue || [[self.stringValue stringByTrimming] isEqualToString:@""];
+}
+
+@end
 
 
 @implementation DVVideoAdServingTemplate (Parsing)
@@ -83,6 +93,43 @@
     }
     VLogV(videoAd.clickTrackingURLs);
     
+#define TRACKING_EVENTS @"TrackingEvents"
+    NSArray *trackingEvents = [videoElement elementsForName:TRACKING_EVENTS]; // VAST 2 has that tag in the Video tag
+    if (!trackingEvents || !trackingEvents.count) { // VAST 1 has it at the same level than the video tag.
+        trackingEvents = [element elementsForName:TRACKING_EVENTS];
+    }
+    if (trackingEvents.count) {
+        DDXMLElement *trackingEvent = [trackingEvents objectAtIndex:0];
+        NSArray *trackingElements = [trackingEvent elementsForName:@"Tracking"];
+        NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+        [trackingElements enumerateObjectsUsingBlock:^(DDXMLElement *trackingElement, NSUInteger idx, BOOL *stop) {
+            NSString *event = [trackingElement attributeForName:@"event"].stringValue;
+            NSArray *urls = [trackingElement elementsForName:@"URL"];
+            NSMutableDictionary *innerDictionary = [NSMutableDictionary dictionary];
+            if (!urls.count) {
+                if (dictionary[event]) {
+                    innerDictionary = dictionary[event];
+                }
+                if (!trackingElement.isEmpty) {
+                    DLogV(trackingElement.stringValue);
+                    NSString *key = [NSString stringWithFormat:@"url-%d", innerDictionary.allKeys.count];
+                    VLogV(key);
+                    innerDictionary[key] = [NSURL URLWithString:trackingElement.stringValue];
+                }
+            } else {
+                [urls enumerateObjectsUsingBlock:^(DDXMLElement *url, NSUInteger idx, BOOL *stop) {
+                    if (!url.isEmpty) {
+                        NSString *attribute = [url attributeForName:@"id"].stringValue;
+                        innerDictionary[attribute] = [NSURL URLWithString:url.stringValue];
+                    }
+                }];
+            }
+            dictionary[event] = innerDictionary;
+        }];
+        videoAd.trackingEvents = dictionary;
+    }
+    VLogV(videoAd.trackingEvents);
+    
     DDXMLElement *mediaFiles = [[videoElement elementsForName:@"MediaFiles"] objectAtIndex:0];
     DDXMLElement *mediaFile = nil;
     for (DDXMLElement *currentMF in [mediaFiles elementsForName:@"MediaFile"]) {
@@ -111,10 +158,12 @@
 
 - (void)addURLElement:(DDXMLElement*)element toArray:(NSMutableArray*)array
 {
-    NSURL *url = [NSURL URLWithString:[element stringValue]];
-    VLogV(url);
-    if (url) {
-        [array addObject:url];
+    if (!element.isEmpty) {
+        NSURL *url = [NSURL URLWithString:element.stringValue];
+        VLogV(url);
+        if (url) {
+            [array addObject:url];
+        }
     }
 }
 
