@@ -21,22 +21,21 @@
     videoAd.system = [[[element elementsForName:@"AdSystem"] objectAtIndex:0] stringValue];
     videoAd.title = [[[element elementsForName:@"AdSystem"] objectAtIndex:0] stringValue];
     
-    DDXMLElement *impressionElement = [[element elementsForName:@"Impression"] objectAtIndex:0];
-    NSArray *urls = [impressionElement elementsForName:@"URL"];
-    NSMutableArray *impressionURLs = [NSMutableArray array];
-    if (urls && urls.count) {
-        // VAST 2 — Multiple <Impression> elements
-        [urls enumerateObjectsUsingBlock:^(DDXMLElement *impressionElement, NSUInteger idx, BOOL *stop) {
-            [self addURLElement:impressionElement toArray:impressionURLs];
-        }];
-    } else {
-        // VAST 1 — Only one <Impression> element
-        [self addURLElement:impressionElement toArray:impressionURLs];
+    // VAST 2 — Multiple <Impression> elements
+    NSArray *impressionElements = [element elementsForName:@"Impression"];
+    if (impressionElements.count == 1) {
+        // VAST 1 — Multiple <URL> elements in a single <Impression>
+        DDXMLElement *impressionElement = [impressionElements objectAtIndex:0];
+        impressionElements = [impressionElement elementsForName:@"URL"];
     }
+    NSMutableArray *impressionURLs = [NSMutableArray array];
+    [impressionElements enumerateObjectsUsingBlock:^(DDXMLElement *impressionElement, NSUInteger idx, BOOL *stop) {
+        [self addURLElement:impressionElement toArray:impressionURLs];
+    }];
     VLogV(impressionURLs);
     videoAd.impressionURLs = impressionURLs;
     if (impressionURLs.count) {
-        // For compatibility sake (code using this VAST 1 accessor)
+        // For compatibility sake (code using ios-vast-player's "single" impressionURL)
         videoAd.impressionURL =  impressionURLs[0];
     }
     VLogV(videoAd.impressionURLs);
@@ -62,6 +61,28 @@
     DVTimeIntervalFormatter *timeIntervalParser = [[DVTimeIntervalFormatter alloc] init];
     videoAd.duration = [timeIntervalParser timeIntervalWithString:durationString];
     
+    DDXMLElement *videoClicks = [[videoElement elementsForName:@"VideoClicks"] objectAtIndex:0];
+    DDXMLElement *clickThrough = [[videoClicks elementsForName:@"ClickThrough"] objectAtIndex:0];
+    videoAd.clickThroughURL = [NSURL URLWithString:clickThrough.stringValue];
+    // VAST 2 — Multiple <ClickTracking> elements
+    NSArray *clickTrackingElements = [videoClicks elementsForName:@"ClickTracking"];
+    if (clickTrackingElements.count == 1) {
+        // VAST 1 — Multiple <URL> elements in a single <ClickTracking>
+        DDXMLElement *clickTrackingElement = [clickTrackingElements objectAtIndex:0];
+        clickTrackingElements = [clickTrackingElement elementsForName:@"URL"];
+    }
+    NSMutableArray *clickTrackingURLs = [NSMutableArray array];
+    [clickTrackingElements enumerateObjectsUsingBlock:^(DDXMLElement *clickTrackingElement, NSUInteger idx, BOOL *stop) {
+        [self addURLElement:clickTrackingElement toArray:clickTrackingURLs];
+    }];
+    VLogV(clickTrackingURLs);
+    videoAd.clickTrackingURLs = clickTrackingURLs;
+    if (clickTrackingURLs.count) {
+        // For compatibility sake (code using ios-vast-player's "single" clickTrackingURL)
+        videoAd.clickTrackingURL =  clickTrackingURLs[0];
+    }
+    VLogV(videoAd.clickTrackingURLs);
+    
     DDXMLElement *mediaFiles = [[videoElement elementsForName:@"MediaFiles"] objectAtIndex:0];
     DDXMLElement *mediaFile = nil;
     for (DDXMLElement *currentMF in [mediaFiles elementsForName:@"MediaFile"]) {
@@ -71,7 +92,7 @@
             break;
         }
     }
-    urls = [mediaFile elementsForName:@"URL"];
+    NSArray *urls = [mediaFile elementsForName:@"URL"];
     DDXMLDocument *url = urls && urls.count ? [urls objectAtIndex:0] : mediaFile;
     videoAd.mediaFileURL = [NSURL URLWithString:[url stringValue]];
 
