@@ -2,7 +2,7 @@
 //  DVVideoAdServingTemplate+Parsing.m
 //  DVVASTSample
 //
-//  Created by Nikolay Morev on 8/7/12.
+//  Created by Nikolay Morev on 8/7/12. Augmented by Manuel "StuFF mc" Carrasco Molina in 2013 — https://github.com/stuffmc/ios-vast-player/tree/dev
 //  Copyright (c) 2012 DENIVIP Media. All rights reserved.
 //
 
@@ -67,13 +67,19 @@
         }
     }
     
-    NSString *durationString = [[[videoElement elementsForName:@"Duration"] objectAtIndex:0] stringValue];
-    DVTimeIntervalFormatter *timeIntervalParser = [[DVTimeIntervalFormatter alloc] init];
-    videoAd.duration = [timeIntervalParser timeIntervalWithString:durationString];
+    NSArray *durations = [videoElement elementsForName:@"Duration"];
+    if (durations && durations.count) {
+        NSString *durationString = [[durations objectAtIndex:0] stringValue];
+        DVTimeIntervalFormatter *timeIntervalParser = [[DVTimeIntervalFormatter alloc] init];
+        videoAd.duration = [timeIntervalParser timeIntervalWithString:durationString];
+    }
     
     DDXMLElement *videoClicks = [[videoElement elementsForName:@"VideoClicks"] objectAtIndex:0];
-    DDXMLElement *clickThrough = [[videoClicks elementsForName:@"ClickThrough"] objectAtIndex:0];
-    videoAd.clickThroughURL = [NSURL URLWithString:clickThrough.stringValue];
+    NSArray *clickThroughs = [videoClicks elementsForName:@"ClickThrough"];
+    if (clickThroughs && clickThroughs.count) {
+        DDXMLElement *clickThrough = [clickThroughs objectAtIndex:0];
+        videoAd.clickThroughURL = [NSURL URLWithString:clickThrough.stringValue];
+    }
     // VAST 2 — Multiple <ClickTracking> elements
     NSArray *clickTrackingElements = [videoClicks elementsForName:@"ClickTracking"];
     if (clickTrackingElements.count == 1) {
@@ -101,15 +107,13 @@
     if (trackingEvents.count) {
         DDXMLElement *trackingEvent = [trackingEvents objectAtIndex:0];
         NSArray *trackingElements = [trackingEvent elementsForName:@"Tracking"];
-        NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+//        NSMutableDictionary *dictionary = videoAd.trackingEvents ? [videoAd.trackingEvents mutableCopy] : [NSMutableDictionary dictionary];
+        NSMutableDictionary *dictionary = videoAd.trackingEvents ? [videoAd.trackingEvents mutableCopy] : [NSMutableDictionary dictionary];
         [trackingElements enumerateObjectsUsingBlock:^(DDXMLElement *trackingElement, NSUInteger idx, BOOL *stop) {
             NSString *event = [trackingElement attributeForName:@"event"].stringValue;
             NSArray *urls = [trackingElement elementsForName:@"URL"];
-            NSMutableDictionary *innerDictionary = [NSMutableDictionary dictionary];
+            NSMutableDictionary *innerDictionary = dictionary[event] ? [dictionary[event] mutableCopy] : [NSMutableDictionary dictionary];
             if (!urls.count) {
-                if (dictionary[event]) {
-                    innerDictionary = dictionary[event];
-                }
                 if (!trackingElement.isEmpty) {
                     DLogV(trackingElement.stringValue);
                     NSString *key = [NSString stringWithFormat:@"url-%d", innerDictionary.allKeys.count];
@@ -130,18 +134,21 @@
     }
     VLogV(videoAd.trackingEvents);
     
-    DDXMLElement *mediaFiles = [[videoElement elementsForName:@"MediaFiles"] objectAtIndex:0];
-    DDXMLElement *mediaFile = nil;
-    for (DDXMLElement *currentMF in [mediaFiles elementsForName:@"MediaFile"]) {
-        NSString *type = [[currentMF attributeForName:@"type"] stringValue];
-        if ([type isEqualToString:@"mobile/m3u8"] || [type isEqualToString:@"video/mp4"] || [type isEqualToString:@"video/x-mp4"]) {
-            mediaFile = currentMF;
-            break;
+    NSArray *mediaFilesArray = [videoElement elementsForName:@"MediaFiles"];
+    if (mediaFilesArray && mediaFilesArray.count) {
+        DDXMLElement *mediaFiles = [mediaFilesArray objectAtIndex:0];
+        DDXMLElement *mediaFile = nil;
+        for (DDXMLElement *currentMF in [mediaFiles elementsForName:@"MediaFile"]) {
+            NSString *type = [[currentMF attributeForName:@"type"] stringValue];
+            if ([type isEqualToString:@"mobile/m3u8"] || [type isEqualToString:@"video/mp4"] || [type isEqualToString:@"video/x-mp4"]) {
+                mediaFile = currentMF;
+                break;
+            }
         }
+        NSArray *urls = [mediaFile elementsForName:@"URL"];
+        DDXMLDocument *url = urls && urls.count ? [urls objectAtIndex:0] : mediaFile;
+        videoAd.mediaFileURL = [NSURL URLWithString:[url stringValue]];
     }
-    NSArray *urls = [mediaFile elementsForName:@"URL"];
-    DDXMLDocument *url = urls && urls.count ? [urls objectAtIndex:0] : mediaFile;
-    videoAd.mediaFileURL = [NSURL URLWithString:[url stringValue]];
 
     // Looking for the <Fallback> tag that will tell me not to play this media.
     NSArray *extensions = [element elementsForName:@"Extensions"];
@@ -202,8 +209,24 @@
             vastTagArray = [adContents elementsForName:@"VASTAdTagURI"];
             vastTagURI = [vastTagArray objectAtIndex:0];
         }
+        // TODO: Parse this (inline) + self (wrapper!)
         ((DVWrapperVideoAd*)videoAd).URL = [NSURL URLWithString:[vastTagURI stringValue]];
         VLogV(((DVWrapperVideoAd*)videoAd).URL);
+        
+        NSError *inlineVideoAdError = nil;
+        if (! [self populateInlineVideoAd:(DVInlineVideoAd *)videoAd
+                           withXMLElement:adContents
+                                    error:&inlineVideoAdError]) {
+            if (error != nil) {
+                NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                                          inlineVideoAdError, NSUnderlyingErrorKey, nil];
+                *error = [NSError errorWithDomain:DVVideoAdServingTemplateErrorDomain
+                                             code:DVVideoAdServingTemplateSchemaValidationErrorCode
+                                         userInfo:userInfo];
+            }
+            return nil;
+        }
+        videoAd.playMediaFile = NO;
     }
     else {
         if (error != nil) *error = [NSError errorWithDomain:DVVideoAdServingTemplateErrorDomain
@@ -221,8 +244,8 @@
 - (id)initWithData:(NSData *)data error:(NSError *__autoreleasing *)error_
 {
     NSError *error = nil;
-    DDXMLDocument *document = [[DDXMLDocument alloc] initWithData:data options:0 error:&error];
-    if (! document) {
+    self.document = [[DDXMLDocument alloc] initWithData:data options:0 error:&error];
+    if (! self.document) {
         if (error_ != nil) {
             NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                                       error, NSUnderlyingErrorKey, nil];
@@ -233,7 +256,7 @@
         return nil;
     }
     
-    self = [self initWithXMLDocument:document error:&error];
+    self = [self initWithXMLDocument:self.document error:&error];
     if (! self) {
         if (error_ != nil) *error_ = error;
         return nil;
