@@ -49,7 +49,9 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 @end
 
 
-@implementation DVIABPlayer
+@implementation DVIABPlayer {
+    BOOL paused;
+}
 
 @synthesize currentAd = _currentAd;
 
@@ -173,11 +175,12 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
         VLog(@"DVIABPlayerRateObservationContext %@ %f", self.currentItem, rate);
 
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (rate == 0) {
+            if (rate == 0 && !paused) {
                 VLogV(self.playerLayer);
                 self.playerLayer.player = self.adPlayer;
                 [self.adPlayer play];
             }
+            paused = NO;
         });
     }
     else {
@@ -376,6 +379,25 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
     }
     
     [self startAdsFromQueue];
+}
+
+- (void)pause
+{
+    if (self.adPlayer) {
+        paused = YES;
+        [self.adPlayer pause];
+    } else {
+        [super pause];
+    }
+}
+
+- (void)play
+{
+    if (self.adPlayer) {
+        [self.adPlayer play];
+    } else {
+        [super play];
+    }
 }
 
 - (void)dealloc
