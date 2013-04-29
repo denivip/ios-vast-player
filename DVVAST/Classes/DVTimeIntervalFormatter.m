@@ -52,7 +52,7 @@
     NSInteger hours = totalSeconds / (60 * 60);
     NSInteger minutes = (totalSeconds - hours * 60 * 60) / 60;
     CGFloat seconds = MAX(0, (totalSeconds - hours * 60 * 60 - minutes * 60));
-    return [NSString stringWithFormat:@"%02i:%02i:%06.3f", hours, minutes, seconds];
+    return [NSString stringWithFormat:@"%02li:%02li:%06.3f", (long)hours, (long)minutes, seconds];
 }
 
 @end

@@ -1,3 +1,3 @@
-platform :ios
+platform :ios, '5.0'
 xcodeproj 'DVVASTSample/DVVASTSample.xcodeproj'
-pod 'KissXML'
+pod 'DVVAST', :local => 'DVVAST'

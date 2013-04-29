@@ -121,7 +121,7 @@
             if (!urls.count) {
                 if (!trackingElement.isEmpty) {
                     VLogV(trackingElement.stringValue);
-                    NSString *key = [NSString stringWithFormat:@"url-%d", innerDictionary.allKeys.count];
+                    NSString *key = [NSString stringWithFormat:@"url-%lu", (unsigned long)innerDictionary.allKeys.count];
                     VLogV(key);
                     innerDictionary[key] = [NSURL URLWithString:trackingElement.stringValue];
                 }
