@@ -74,30 +74,35 @@
         videoAd.duration = [timeIntervalParser timeIntervalWithString:durationString];
     }
     
-    DDXMLElement *videoClicks = [[videoElement elementsForName:@"VideoClicks"] objectAtIndex:0];
-    NSArray *clickThroughs = [videoClicks elementsForName:@"ClickThrough"];
-    if (clickThroughs && clickThroughs.count) {
-        DDXMLElement *clickThrough = [clickThroughs objectAtIndex:0];
-        videoAd.clickThroughURL = [NSURL URLWithString:clickThrough.stringValue];
+    NSArray *videoClicksElements = [videoElement elementsForName:@"VideoClicks"];
+    if ([videoClicksElements count] > 0) {
+        DDXMLElement *videoClicks = [videoClicksElements objectAtIndex:0];
+        NSArray *clickThroughs = [videoClicks elementsForName:@"ClickThrough"];
+        if (clickThroughs && clickThroughs.count) {
+            DDXMLElement *clickThrough = [clickThroughs objectAtIndex:0];
+            videoAd.clickThroughURL = [NSURL URLWithString:clickThrough.stringValue];
+        }
+        
+        // VAST 2 — Multiple <ClickTracking> elements
+        NSArray *clickTrackingElements = [videoClicks elementsForName:@"ClickTracking"];
+        if (clickTrackingElements.count == 1) {
+            // VAST 1 — Multiple <URL> elements in a single <ClickTracking>
+            DDXMLElement *clickTrackingElement = [clickTrackingElements objectAtIndex:0];
+            clickTrackingElements = [clickTrackingElement elementsForName:@"URL"];
+        }
+
+        NSMutableArray *clickTrackingURLs = [NSMutableArray array];
+        [clickTrackingElements enumerateObjectsUsingBlock:^(DDXMLElement *clickTrackingElement, NSUInteger idx, BOOL *stop) {
+            [self addURLElement:clickTrackingElement toArray:clickTrackingURLs];
+        }];
+        VLogV(clickTrackingURLs);
+        videoAd.clickTrackingURLs = clickTrackingURLs;
+        if (clickTrackingURLs.count) {
+            // For compatibility sake (code using ios-vast-player's "single" clickTrackingURL)
+            videoAd.clickTrackingURL =  clickTrackingURLs[0];
+        }
+        VLogV(videoAd.clickTrackingURLs);
     }
-    // VAST 2 — Multiple <ClickTracking> elements
-    NSArray *clickTrackingElements = [videoClicks elementsForName:@"ClickTracking"];
-    if (clickTrackingElements.count == 1) {
-        // VAST 1 — Multiple <URL> elements in a single <ClickTracking>
-        DDXMLElement *clickTrackingElement = [clickTrackingElements objectAtIndex:0];
-        clickTrackingElements = [clickTrackingElement elementsForName:@"URL"];
-    }
-    NSMutableArray *clickTrackingURLs = [NSMutableArray array];
-    [clickTrackingElements enumerateObjectsUsingBlock:^(DDXMLElement *clickTrackingElement, NSUInteger idx, BOOL *stop) {
-        [self addURLElement:clickTrackingElement toArray:clickTrackingURLs];
-    }];
-    VLogV(clickTrackingURLs);
-    videoAd.clickTrackingURLs = clickTrackingURLs;
-    if (clickTrackingURLs.count) {
-        // For compatibility sake (code using ios-vast-player's "single" clickTrackingURL)
-        videoAd.clickTrackingURL =  clickTrackingURLs[0];
-    }
-    VLogV(videoAd.clickTrackingURLs);
     
 #define TRACKING_EVENTS @"TrackingEvents"
     NSArray *trackingEvents = [videoElement elementsForName:TRACKING_EVENTS]; // VAST 2 has that tag in the Video tag
