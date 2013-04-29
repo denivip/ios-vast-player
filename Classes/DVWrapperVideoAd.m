@@ -7,6 +7,7 @@
 //
 
 #import "DVWrapperVideoAd.h"
+#import "DVVideoPlayBreak.h"
 
 
 @implementation DVWrapperVideoAd

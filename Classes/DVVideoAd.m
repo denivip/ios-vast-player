@@ -21,7 +21,7 @@
             VLogV(context);
             VLogV(response.URL);
             if (error) {
-                DLogV(error);
+                VLogV(error);
             }
         }];
     }
