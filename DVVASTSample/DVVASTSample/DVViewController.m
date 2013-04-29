@@ -56,7 +56,7 @@ static void *DVViewControllerPlayerItemStatusObservationContext = &DVViewControl
     }
     else if (context == DVViewControllerPlayerItemStatusObservationContext) {
         AVPlayerItemStatus status = [[change objectForKey:NSKeyValueChangeNewKey] integerValue];
-        NSLog(@"DVViewControllerPlayerItemStatusObservationContext %i", status);
+        VLog(@"DVViewControllerPlayerItemStatusObservationContext %i", status);
         if (status == AVPlayerItemStatusReadyToPlay &&
             ! self.didStartPlayback) {
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -107,6 +107,8 @@ static void *DVViewControllerPlayerItemStatusObservationContext = &DVViewControl
     [super viewDidLoad];
     
     self.player = [[DVIABPlayer alloc] init];
+    // Example of a specific HTTP Header you would want to pass to your server for capping reasons — uncomment to test ;)
+    // self.player.httpHeaders = @{@"User-Agent": @"Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)"};
     self.player.playerLayer = (AVPlayerLayer *)self.playerView.layer;
     ((AVPlayerLayer *)self.playerView.layer).player = self.player;
     
@@ -174,7 +176,7 @@ static void *DVViewControllerPlayerItemStatusObservationContext = &DVViewControl
 
 - (void)player:(DVIABPlayer *)player didFailPlayBreak:(DVVideoPlayBreak *)playBreak withError:(NSError *)error
 {
-    NSLog(@"player:didFailPlayBreak:error:%@", error);
+    VLogV(error);
 }
 
 @end

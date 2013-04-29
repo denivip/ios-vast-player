@@ -41,6 +41,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4C2E4BFE16D6188F00E645D9 /* DVLog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DVLog.h; sourceTree = "<group>"; };
 		4C47F94816D292B500EFCA8F /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		E3361BA415D151D2002C1905 /* DVVASTSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DVVASTSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3361BA815D151D2002C1905 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -199,6 +200,7 @@
 				E3361BFA15D171BE002C1905 /* DVVideoAdServingTemplate+Parsing.m */,
 				E38381D215D2688C0056C4CE /* DVTimeIntervalFormatter.h */,
 				E38381D315D2688C0056C4CE /* DVTimeIntervalFormatter.m */,
+				4C2E4BFE16D6188F00E645D9 /* DVLog.h */,
 			);
 			name = Classes;
 			path = ../Classes;
@@ -283,7 +285,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = DV;
-				LastUpgradeCheck = 0440;
+				LastUpgradeCheck = 0460;
 				ORGANIZATIONNAME = "DENIVIP Media";
 			};
 			buildConfigurationList = E3361B9E15D151D2002C1905 /* Build configuration list for PBXProject "DVVASTSample" */;
@@ -375,6 +377,9 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
@@ -407,6 +412,9 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
