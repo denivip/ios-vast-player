@@ -174,13 +174,21 @@
     }
 }
 
+- (DDXMLElement *)getFirstElement:(NSArray*)elements
+{
+    DDXMLElement *element = nil;
+    if (elements && elements.count && [[elements objectAtIndex:0] isKindOfClass:[DDXMLElement class]]) {
+        element = (DDXMLElement*)[elements objectAtIndex:0];
+    }
+    return element;
+}
+
 - (DVVideoAd *)videoAdWithXMLElement:(DDXMLElement *)element error:(NSError **)error
 {
     DVVideoAd *videoAd = nil;
-    
-    DDXMLElement *adContents = (DDXMLElement *)[element childAtIndex:0];
-    NSString *adContentsName = [adContents name];
-    if ([adContentsName isEqualToString:@"InLine"]) {
+    NSError *xPathError = nil;
+    DDXMLElement *adContents = [self getFirstElement:[element nodesForXPath:@"InLine" error:&xPathError]];
+    if (adContents) {
         videoAd = [[DVInlineVideoAd alloc] init];
         NSError *inlineVideoAdError = nil;
         if (! [self populateInlineVideoAd:(DVInlineVideoAd *)videoAd
@@ -195,46 +203,48 @@
             }
             return nil;
         }
-    }
-    else if ([adContentsName isEqualToString:@"Wrapper"]) {
-        videoAd = [[DVWrapperVideoAd alloc] init];
-        
-        NSArray *vastTagArray = [adContents elementsForName:@"VASTAdTagURL"];
-        DDXMLElement *vastTagURI = nil;
-        if (vastTagArray && vastTagArray.count) {
-            // VAST 1.x
-            vastTagURI = [[[vastTagArray objectAtIndex:0] elementsForName:@"URL"] objectAtIndex:0];
-        } else {
-            // VAST 2.0
-            vastTagArray = [adContents elementsForName:@"VASTAdTagURI"];
-            vastTagURI = [vastTagArray objectAtIndex:0];
-        }
-        // TODO: Parse this (inline) + self (wrapper!)
-        ((DVWrapperVideoAd*)videoAd).URL = [NSURL URLWithString:[vastTagURI stringValue]];
-        VLogV(((DVWrapperVideoAd*)videoAd).URL);
-        
-        NSError *inlineVideoAdError = nil;
-        if (! [self populateInlineVideoAd:(DVInlineVideoAd *)videoAd
-                           withXMLElement:adContents
-                                    error:&inlineVideoAdError]) {
-            if (error != nil) {
-                NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                                          inlineVideoAdError, NSUnderlyingErrorKey, nil];
-                *error = [NSError errorWithDomain:DVVideoAdServingTemplateErrorDomain
-                                             code:DVVideoAdServingTemplateSchemaValidationErrorCode
-                                         userInfo:userInfo];
+    } else {
+        adContents = [self getFirstElement:[element nodesForXPath:@"Wrapper" error:&xPathError]];
+        if (adContents) {
+            videoAd = [[DVWrapperVideoAd alloc] init];
+            NSArray *vastTagArray = [adContents elementsForName:@"VASTAdTagURL"];
+            DDXMLElement *vastTagURI = nil;
+            if (vastTagArray && vastTagArray.count) {
+                // VAST 1.x
+                vastTagURI = [[[vastTagArray objectAtIndex:0] elementsForName:@"URL"] objectAtIndex:0];
+            } else {
+                // VAST 2.0
+                vastTagArray = [adContents elementsForName:@"VASTAdTagURI"];
+                vastTagURI = [vastTagArray objectAtIndex:0];
             }
+            VLogV(vastTagURI);
+            // TODO: Parse this (inline) + self (wrapper!)
+            ((DVWrapperVideoAd*)videoAd).URL = [NSURL URLWithString:[vastTagURI stringValue]];
+            VLogV(((DVWrapperVideoAd*)videoAd).URL);
+            
+            NSError *inlineVideoAdError = nil;
+            if (! [self populateInlineVideoAd:(DVInlineVideoAd *)videoAd
+                               withXMLElement:adContents
+                                        error:&inlineVideoAdError]) {
+                if (error != nil) {
+                    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                                              inlineVideoAdError, NSUnderlyingErrorKey, nil];
+                    *error = [NSError errorWithDomain:DVVideoAdServingTemplateErrorDomain
+                                                 code:DVVideoAdServingTemplateSchemaValidationErrorCode
+                                             userInfo:userInfo];
+                }
+                return nil;
+            }
+            videoAd.playMediaFile = NO;
+        } else {
+            adContents = (DDXMLElement *)[element childAtIndex:0];
+            VLog(@"Unsupported, first element: %@", [adContents name]);
+            if (error != nil) *error = [NSError errorWithDomain:DVVideoAdServingTemplateErrorDomain
+                                                           code:DVVideoAdServingTemplateUnexpectedAdType
+                                                       userInfo:nil];
             return nil;
         }
-        videoAd.playMediaFile = NO;
     }
-    else {
-        if (error != nil) *error = [NSError errorWithDomain:DVVideoAdServingTemplateErrorDomain
-                                                       code:DVVideoAdServingTemplateUnexpectedAdType
-                                                   userInfo:nil];
-        return nil;
-    }
-    
     DDXMLNode *idAttribute = [element attributeForName:@"id"];
     videoAd.identifier = [idAttribute stringValue];
     
