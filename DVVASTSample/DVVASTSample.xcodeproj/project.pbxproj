@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4C47F94916D292B500EFCA8F /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C47F94816D292B500EFCA8F /* Default-568h@2x.png */; };
+		D469A237EA4141DAA6A4E459 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BEC01DE053E64BCE93E8A4C2 /* libPods.a */; };
 		E3361BA915D151D2002C1905 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3361BA815D151D2002C1905 /* UIKit.framework */; };
 		E3361BAB15D151D2002C1905 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3361BAA15D151D2002C1905 /* Foundation.framework */; };
 		E3361BAD15D151D2002C1905 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3361BAC15D151D2002C1905 /* CoreGraphics.framework */; };
@@ -23,11 +24,6 @@
 		E3361BDC15D169BD002C1905 /* DVVideoAd.m in Sources */ = {isa = PBXBuildFile; fileRef = E3361BDB15D169BD002C1905 /* DVVideoAd.m */; };
 		E3361BDF15D16A5A002C1905 /* DVInlineVideoAd.m in Sources */ = {isa = PBXBuildFile; fileRef = E3361BDE15D16A5A002C1905 /* DVInlineVideoAd.m */; };
 		E3361BE215D16A68002C1905 /* DVWrapperVideoAd.m in Sources */ = {isa = PBXBuildFile; fileRef = E3361BE115D16A67002C1905 /* DVWrapperVideoAd.m */; };
-		E3361BF415D17079002C1905 /* DDXMLElementAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = E3361BE715D17079002C1905 /* DDXMLElementAdditions.m */; };
-		E3361BF515D17079002C1905 /* NSString+DDXML.m in Sources */ = {isa = PBXBuildFile; fileRef = E3361BEA15D17079002C1905 /* NSString+DDXML.m */; };
-		E3361BF615D17079002C1905 /* DDXMLDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = E3361BED15D17079002C1905 /* DDXMLDocument.m */; };
-		E3361BF715D17079002C1905 /* DDXMLElement.m in Sources */ = {isa = PBXBuildFile; fileRef = E3361BEF15D17079002C1905 /* DDXMLElement.m */; };
-		E3361BF815D17079002C1905 /* DDXMLNode.m in Sources */ = {isa = PBXBuildFile; fileRef = E3361BF115D17079002C1905 /* DDXMLNode.m */; };
 		E3361BFB15D171BE002C1905 /* DVVideoAdServingTemplate+Parsing.m in Sources */ = {isa = PBXBuildFile; fileRef = E3361BFA15D171BE002C1905 /* DVVideoAdServingTemplate+Parsing.m */; };
 		E38381D415D2688C0056C4CE /* DVTimeIntervalFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = E38381D315D2688C0056C4CE /* DVTimeIntervalFormatter.m */; };
 		E38381D715D26CC40056C4CE /* DVPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = E38381D615D26CC40056C4CE /* DVPlayerView.m */; };
@@ -41,8 +37,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		089C6176C5AF475EAC1BE890 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = ../Pods/Pods.xcconfig; sourceTree = SOURCE_ROOT; };
 		4C2E4BFE16D6188F00E645D9 /* DVLog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DVLog.h; sourceTree = "<group>"; };
 		4C47F94816D292B500EFCA8F /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		BEC01DE053E64BCE93E8A4C2 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3361BA415D151D2002C1905 /* DVVASTSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DVVASTSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3361BA815D151D2002C1905 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		E3361BAA15D151D2002C1905 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -72,18 +70,6 @@
 		E3361BDE15D16A5A002C1905 /* DVInlineVideoAd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DVInlineVideoAd.m; sourceTree = "<group>"; };
 		E3361BE015D16A67002C1905 /* DVWrapperVideoAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVWrapperVideoAd.h; sourceTree = "<group>"; };
 		E3361BE115D16A67002C1905 /* DVWrapperVideoAd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DVWrapperVideoAd.m; sourceTree = "<group>"; };
-		E3361BE615D17079002C1905 /* DDXMLElementAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDXMLElementAdditions.h; sourceTree = "<group>"; };
-		E3361BE715D17079002C1905 /* DDXMLElementAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDXMLElementAdditions.m; sourceTree = "<group>"; };
-		E3361BE915D17079002C1905 /* NSString+DDXML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+DDXML.h"; sourceTree = "<group>"; };
-		E3361BEA15D17079002C1905 /* NSString+DDXML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+DDXML.m"; sourceTree = "<group>"; };
-		E3361BEB15D17079002C1905 /* DDXML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDXML.h; sourceTree = "<group>"; };
-		E3361BEC15D17079002C1905 /* DDXMLDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDXMLDocument.h; sourceTree = "<group>"; };
-		E3361BED15D17079002C1905 /* DDXMLDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDXMLDocument.m; sourceTree = "<group>"; };
-		E3361BEE15D17079002C1905 /* DDXMLElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDXMLElement.h; sourceTree = "<group>"; };
-		E3361BEF15D17079002C1905 /* DDXMLElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDXMLElement.m; sourceTree = "<group>"; };
-		E3361BF015D17079002C1905 /* DDXMLNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDXMLNode.h; sourceTree = "<group>"; };
-		E3361BF115D17079002C1905 /* DDXMLNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDXMLNode.m; sourceTree = "<group>"; };
-		E3361BF315D17079002C1905 /* DDXMLPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDXMLPrivate.h; sourceTree = "<group>"; };
 		E3361BF915D171BE002C1905 /* DVVideoAdServingTemplate+Parsing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DVVideoAdServingTemplate+Parsing.h"; sourceTree = "<group>"; };
 		E3361BFA15D171BE002C1905 /* DVVideoAdServingTemplate+Parsing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DVVideoAdServingTemplate+Parsing.m"; sourceTree = "<group>"; };
 		E38381D215D2688C0056C4CE /* DVTimeIntervalFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVTimeIntervalFormatter.h; sourceTree = "<group>"; };
@@ -109,6 +95,7 @@
 				E3361BA915D151D2002C1905 /* UIKit.framework in Frameworks */,
 				E3361BAB15D151D2002C1905 /* Foundation.framework in Frameworks */,
 				E3361BAD15D151D2002C1905 /* CoreGraphics.framework in Frameworks */,
+				D469A237EA4141DAA6A4E459 /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -125,9 +112,9 @@
 				E38381DA15D290340056C4CE /* Icon.png */,
 				E3361BAE15D151D2002C1905 /* DVVASTSample */,
 				E3361BC515D15A96002C1905 /* Classes */,
-				E3361BE315D1706B002C1905 /* Vendor */,
 				E3361BA715D151D2002C1905 /* Frameworks */,
 				E3361BA515D151D2002C1905 /* Products */,
+				089C6176C5AF475EAC1BE890 /* Pods.xcconfig */,
 			);
 			sourceTree = "<group>";
 		};
@@ -149,6 +136,7 @@
 				E3361BA815D151D2002C1905 /* UIKit.framework */,
 				E3361BAA15D151D2002C1905 /* Foundation.framework */,
 				E3361BAC15D151D2002C1905 /* CoreGraphics.framework */,
+				BEC01DE053E64BCE93E8A4C2 /* libPods.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -206,58 +194,6 @@
 			path = ../Classes;
 			sourceTree = "<group>";
 		};
-		E3361BE315D1706B002C1905 /* Vendor */ = {
-			isa = PBXGroup;
-			children = (
-				E3361BE415D17079002C1905 /* KissXML */,
-			);
-			name = Vendor;
-			sourceTree = "<group>";
-		};
-		E3361BE415D17079002C1905 /* KissXML */ = {
-			isa = PBXGroup;
-			children = (
-				E3361BE515D17079002C1905 /* Additions */,
-				E3361BE815D17079002C1905 /* Categories */,
-				E3361BEB15D17079002C1905 /* DDXML.h */,
-				E3361BEC15D17079002C1905 /* DDXMLDocument.h */,
-				E3361BED15D17079002C1905 /* DDXMLDocument.m */,
-				E3361BEE15D17079002C1905 /* DDXMLElement.h */,
-				E3361BEF15D17079002C1905 /* DDXMLElement.m */,
-				E3361BF015D17079002C1905 /* DDXMLNode.h */,
-				E3361BF115D17079002C1905 /* DDXMLNode.m */,
-				E3361BF215D17079002C1905 /* Private */,
-			);
-			name = KissXML;
-			path = ../KissXML/KissXML;
-			sourceTree = "<group>";
-		};
-		E3361BE515D17079002C1905 /* Additions */ = {
-			isa = PBXGroup;
-			children = (
-				E3361BE615D17079002C1905 /* DDXMLElementAdditions.h */,
-				E3361BE715D17079002C1905 /* DDXMLElementAdditions.m */,
-			);
-			path = Additions;
-			sourceTree = "<group>";
-		};
-		E3361BE815D17079002C1905 /* Categories */ = {
-			isa = PBXGroup;
-			children = (
-				E3361BE915D17079002C1905 /* NSString+DDXML.h */,
-				E3361BEA15D17079002C1905 /* NSString+DDXML.m */,
-			);
-			path = Categories;
-			sourceTree = "<group>";
-		};
-		E3361BF215D17079002C1905 /* Private */ = {
-			isa = PBXGroup;
-			children = (
-				E3361BF315D17079002C1905 /* DDXMLPrivate.h */,
-			);
-			path = Private;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -265,9 +201,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = E3361BC215D151D2002C1905 /* Build configuration list for PBXNativeTarget "DVVASTSample" */;
 			buildPhases = (
+				28502A96C3FC4123AF26BEE0 /* Check Pods Manifest.lock */,
 				E3361BA015D151D2002C1905 /* Sources */,
 				E3361BA115D151D2002C1905 /* Frameworks */,
 				E3361BA215D151D2002C1905 /* Resources */,
+				6B5259A029114EC982B1C8F3 /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -322,6 +260,37 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		28502A96C3FC4123AF26BEE0 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sanbox is not in sync with the Podfile.lock. Run 'pod install'.\nEOM\n    exit 1\nfi\n";
+		};
+		6B5259A029114EC982B1C8F3 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/../Pods/Pods-resources.sh\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		E3361BA015D151D2002C1905 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -337,11 +306,6 @@
 				E3361BDC15D169BD002C1905 /* DVVideoAd.m in Sources */,
 				E3361BDF15D16A5A002C1905 /* DVInlineVideoAd.m in Sources */,
 				E3361BE215D16A68002C1905 /* DVWrapperVideoAd.m in Sources */,
-				E3361BF415D17079002C1905 /* DDXMLElementAdditions.m in Sources */,
-				E3361BF515D17079002C1905 /* NSString+DDXML.m in Sources */,
-				E3361BF615D17079002C1905 /* DDXMLDocument.m in Sources */,
-				E3361BF715D17079002C1905 /* DDXMLElement.m in Sources */,
-				E3361BF815D17079002C1905 /* DDXMLNode.m in Sources */,
 				E3361BFB15D171BE002C1905 /* DVVideoAdServingTemplate+Parsing.m in Sources */,
 				E38381D415D2688C0056C4CE /* DVTimeIntervalFormatter.m in Sources */,
 				E38381D715D26CC40056C4CE /* DVPlayerView.m in Sources */,
@@ -395,12 +359,9 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					/usr/include/libxml2,
-					"$(SRCROOT)/KissXML",
-				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
-				OTHER_LDFLAGS = "-lxml2";
+				OTHER_LDFLAGS = "$(inherited)";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -423,13 +384,10 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					/usr/include/libxml2,
-					"$(SRCROOT)/KissXML",
-				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				OTHER_LDFLAGS = "-lxml2";
+				OTHER_LDFLAGS = "$(inherited)";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -437,11 +395,17 @@
 		};
 		E3361BC315D151D2002C1905 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 089C6176C5AF475EAC1BE890 /* Pods.xcconfig */;
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "DVVASTSample/DVVASTSample-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"${PODS_HEADERS_SEARCH_PATHS}",
+					"$(inherited)",
+				);
 				INFOPLIST_FILE = "DVVASTSample/DVVASTSample-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
@@ -450,11 +414,17 @@
 		};
 		E3361BC415D151D2002C1905 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 089C6176C5AF475EAC1BE890 /* Pods.xcconfig */;
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "DVVASTSample/DVVASTSample-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"${PODS_HEADERS_SEARCH_PATHS}",
+					"$(inherited)",
+				);
 				INFOPLIST_FILE = "DVVASTSample/DVVASTSample-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;

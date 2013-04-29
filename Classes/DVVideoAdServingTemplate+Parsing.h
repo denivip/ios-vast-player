@@ -7,7 +7,7 @@
 //
 
 #import "DVVideoAdServingTemplate.h"
-#import "DDXML.h"
+#import <KissXML/DDXML.h>
 #import "DVInlineVideoAd.h"
 
 @interface DDXMLElement (VAST)

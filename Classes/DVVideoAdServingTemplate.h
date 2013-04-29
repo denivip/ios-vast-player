@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "DDXMLDocument.h"
+#import <KissXML/DDXMLDocument.h>
 
 
 // http://www.iab.net/media/file/VASTv3.0.pdf
