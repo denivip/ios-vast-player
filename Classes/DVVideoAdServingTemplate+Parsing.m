@@ -77,7 +77,12 @@
         videoAd.duration = [timeIntervalParser timeIntervalWithString:durationString];
     }
     
-    NSArray *videoClicksElements = [videoElement elementsForName:@"VideoClicks"];
+#define VIDEO_CLICKS @"VideoClicks"
+    NSArray *videoClicksElements = [videoElement elementsForName:VIDEO_CLICKS];
+    if (![videoClicksElements count]) {
+        // Wrapper VAST 1 has it at the root
+        videoClicksElements = [element elementsForName:VIDEO_CLICKS];
+    }
     if ([videoClicksElements count] > 0) {
         DDXMLElement *videoClicks = [videoClicksElements objectAtIndex:0];
         NSArray *clickThroughs = [videoClicks elementsForName:@"ClickThrough"];
