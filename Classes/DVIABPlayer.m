@@ -523,7 +523,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
         if (!self.wrapper) {
             self.wrapper = (DVWrapperVideoAd*)adTemplate.ads[0];
         }
-        if (!self.adsQueue) { // adTemplate.ads.count && adTemplate.ads[0] == wrapper
+        if (!self.adsQueue) {
             // Supercharge with the inline ad.
             self.adsQueue = [adTemplate.ads mutableCopy];
             [self fetchPlayBreakAdTemplate:_wrapper.videoPlayBreak];

@@ -39,6 +39,9 @@
         impressionElements = [impressionElement elementsForName:@"URL"];
     }
     NSMutableArray *impressionURLs = [NSMutableArray array];
+    if (videoAd.impressionURLs.count) { // If we are "merging" (e.g. we first went through a Wrapper)
+        [impressionURLs addObjectsFromArray:videoAd.impressionURLs];
+    }
     [impressionElements enumerateObjectsUsingBlock:^(DDXMLElement *impressionElement, NSUInteger idx, BOOL *stop) {
         [self addURLElement:impressionElement toArray:impressionURLs];
     }];
