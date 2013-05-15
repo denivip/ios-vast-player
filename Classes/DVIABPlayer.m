@@ -308,6 +308,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
         _currentAd = [self.adsQueue objectAtIndex:0];
         [self.adsQueue removeObjectAtIndex:0];
         
+        [self.currentInlineAd trackImpressions];
         if (_currentAd.playMediaFile) {
             if (self.currentInlineAd) {
                 [self playInlineAd:self.currentInlineAd];
