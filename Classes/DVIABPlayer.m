@@ -144,8 +144,9 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
             switch (status) {
                 case AVPlayerItemStatusReadyToPlay:
                     self.playerLayer.player = self.adPlayer;
-                    [self.currentInlineAd trackEvent:@"start"];
-                    [self.currentInlineAd trackImpressions];
+                    if (self.currentInlineAd.playMediaFile) {
+                        [self.currentInlineAd trackEvent:@"start"];
+                    }
                     [self.adPlayer play];
                     break;
                     
@@ -403,8 +404,9 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
 {
     VLogV(playerItem);
 
-    [self.currentInlineAd trackEvent:@"complete"];
-
+    if (self.currentInlineAd.playMediaFile) {
+        [self.currentInlineAd trackEvent:@"complete"];
+    }
     if (playerItem != nil) {
         [[NSNotificationCenter defaultCenter] removeObserver:self
                                                         name:AVPlayerItemDidPlayToEndTimeNotification
