@@ -99,6 +99,10 @@
             [self addURLElement:clickTrackingElement toArray:clickTrackingURLs];
         }];
         VLogV(clickTrackingURLs);
+        VLogV(videoAd.clickTrackingURLs);
+        if (videoAd.clickTrackingURLs.count) { // If we are "merging" (e.g. we first went through a Wrapper)
+            [clickTrackingURLs addObjectsFromArray:videoAd.clickTrackingURLs];
+        }
         videoAd.clickTrackingURLs = clickTrackingURLs;
         if (clickTrackingURLs.count) {
             // For compatibility sake (code using ios-vast-player's "single" clickTrackingURL)
