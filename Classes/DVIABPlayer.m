@@ -224,7 +224,7 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
                 }
                 
                 CMTime currentTime = player.currentTime;
-                VLog(@"playBreaksTimeObserver %@", CMTimeCopyDescription(nil, currentTime));
+                VLog(@"playBreaksTimeObserver %@", CFBridgingRelease(CMTimeCopyDescription(nil, currentTime)));
                 
                 NSArray *playBreaks = [player.adPlaylist midRollPlayBreaksWithTime:currentTime approximate:YES];
                 NSCAssert([playBreaks count], @"No play breaks found for boundary time");

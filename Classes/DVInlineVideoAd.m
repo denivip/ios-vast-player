@@ -32,7 +32,7 @@
     // Trigger those babies, async of course!
     VLogV(self.impressionURLs);
     [self.impressionURLs enumerateObjectsUsingBlock:^(NSURL *url, NSUInteger idx, BOOL *stop) {
-        DLogV(url);
+        VLogV(url);
         [self sendAsynchronousRequest:url context:@"trackImpressions"];
     }];
 }

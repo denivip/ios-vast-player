@@ -57,12 +57,22 @@ static void *DVViewControllerPlayerItemStatusObservationContext = &DVViewControl
     else if (context == DVViewControllerPlayerItemStatusObservationContext) {
         AVPlayerItemStatus status = [[change objectForKey:NSKeyValueChangeNewKey] integerValue];
         VLog(@"DVViewControllerPlayerItemStatusObservationContext %i", status);
-        if (status == AVPlayerItemStatusReadyToPlay &&
-            ! self.didStartPlayback) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                self.didStartPlayback = YES;
-                [self.player play];
-            });
+        switch (status) {
+            case AVPlayerItemStatusReadyToPlay:
+                if (! self.didStartPlayback) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        self.didStartPlayback = YES;
+                        [self.player play];
+                    });
+                }
+                break;
+
+            case AVPlayerItemStatusFailed:
+                VLog(@"%@", self.player.currentItem.error);
+                break;
+                
+            default:
+                break;
         }
     }
     else {

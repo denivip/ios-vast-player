@@ -9,6 +9,8 @@
 #import "DVInlineVideoAd.h"
 
 
+@class DVVideoPlayBreak;
+
 @interface DVWrapperVideoAd : DVInlineVideoAd
 
 @property (nonatomic, copy) NSURL *URL;
