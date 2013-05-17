@@ -47,6 +47,12 @@
             NSString *context = [NSString stringWithFormat:@"trackEvent: %@ (%@)", event, key];
             [self sendAsynchronousRequest:url context:context];
         }];
+        // WARNING — should anyone add other tracking, you might want to change the following!
+        if (![event isEqualToString:@"pause"]) {
+            NSMutableDictionary *mutableDictionary = [self.trackingEvents mutableCopy];
+            [mutableDictionary removeObjectForKey:event]; // Because all the events besides "start" shouldn't be called more than once.
+            self.trackingEvents = mutableDictionary;
+        }
     }
 }
 
