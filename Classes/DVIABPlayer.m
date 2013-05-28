@@ -171,6 +171,8 @@ NSString *const DVIABPlayerErrorDomain = @"DVIABPlayerErrorDomain";
                 if (CMTimeCompare(CMTimeAbsoluteValue(self.currentItem.currentTime),
                                   CMTimeMake(1, 1)) == -1) {
                     self.playBreaksQueue = [[self.adPlaylist preRollPlayBreaks] mutableCopy];
+                    [self removeObserver:self forKeyPath:@"rate"
+                                 context:DVIABContentPlayerRateObservationContext];
                     [self startPlayBreaksFromQueue];
                 }
             }
