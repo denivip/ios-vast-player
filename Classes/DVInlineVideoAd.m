@@ -33,7 +33,7 @@
     VLogV(self.impressionURLs);
     [self.impressionURLs enumerateObjectsUsingBlock:^(NSURL *url, NSUInteger idx, BOOL *stop) {
         VLogV(url);
-        [self sendAsynchronousRequest:url context:@"trackImpressions"];
+        [self sendAsynchronousRequest:url context:self.impressionURLs]; // @"trackImpressions"
     }];
 }
 

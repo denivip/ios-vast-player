@@ -13,11 +13,11 @@
 
 @property (nonatomic, copy) NSString *system;
 @property (nonatomic, copy) NSString *title;
-@property (nonatomic, copy) NSArray *impressionURLs;    // Multiple <Impression> elements
-@property (nonatomic, copy) NSURL *impressionURL;       // For compatibility sake (code using ios-vast-player's "single" impressionURL)
+@property (nonatomic, strong) NSMutableArray *impressionURLs;     // Multiple <Impression> elements
+@property (nonatomic, copy) NSURL *impressionURL;               // For compatibility sake (code using ios-vast-player's "single" impressionURL)
 @property (nonatomic, copy) NSURL *clickThroughURL;
-@property (nonatomic, copy) NSArray *clickTrackingURLs; // Multiple <ClickTracking> elements
-@property (nonatomic, copy) NSURL *clickTrackingURL;    // For compatibility sake (code using ios-vast-player's "single" clickTrackingURL)
+@property (nonatomic, copy) NSArray *clickTrackingURLs;         // Multiple <ClickTracking> elements
+@property (nonatomic, copy) NSURL *clickTrackingURL;            // For compatibility sake (code using ios-vast-player's "single" clickTrackingURL)
 @property (nonatomic, copy) NSDictionary *trackingEvents;
 
 @property (nonatomic) NSTimeInterval duration;

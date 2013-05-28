@@ -13,15 +13,19 @@
 
 @synthesize identifier = _identifier;
 
-- (void)sendAsynchronousRequest:(NSURL*)url context:(NSString*)context
+- (void)sendAsynchronousRequest:(NSURL*)url context:(id)context
 {
-    if (url) {
+    if (url && [url isKindOfClass:[NSURL class]]) {
         NSURLRequest *request = [NSURLRequest requestWithURL:url];
         [NSURLConnection sendAsynchronousRequest:request queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
             VLogV(context);
             VLogV(response.URL);
             if (error) {
                 VLogV(error);
+            } else {
+                if ([context isKindOfClass:[NSMutableArray class]]) {
+                    [(NSMutableArray*)context removeObject:url]; // This avoids tracking the URL twice.
+                }
             }
         }];
     }
