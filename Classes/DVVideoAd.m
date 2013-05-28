@@ -24,7 +24,11 @@
                 VLogV(error);
             } else {
                 if ([context isKindOfClass:[NSMutableArray class]]) {
-                    [(NSMutableArray*)context removeObject:url]; // This avoids tracking the URL twice.
+                    NSInteger indexOfObject = [(NSMutableArray*)context indexOfObject:url];
+                    if (indexOfObject != NSNotFound) {
+                        [(NSMutableArray*)context replaceObjectAtIndex:indexOfObject withObject:[NSNull null]]; // This avoids tracking the URL twice.
+                        // Using NSNull instead of just removing to avoid mutating while enumerating.
+                   }
                 }
             }
         }];
