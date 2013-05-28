@@ -31,10 +31,12 @@
 {
     // Trigger those babies, async of course!
     VLogV(self.impressionURLs);
-    [self.impressionURLs enumerateObjectsUsingBlock:^(NSURL *url, NSUInteger idx, BOOL *stop) {
+    DLogI(self.impressionURLs.count);
+    for (NSUInteger index = 0; index < self.impressionURLs.count; index++) {
+        NSURL *url = self.impressionURLs[index];
         VLogV(url);
         [self sendAsynchronousRequest:url context:self.impressionURLs]; // @"trackImpressions"
-    }];
+    }
 }
 
 - (void)trackEvent:(NSString*)event
