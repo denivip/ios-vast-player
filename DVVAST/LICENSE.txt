@@ -1,4 +1,4 @@
-Copyright 2013 DENIVIP Media
+Copyright 2012-2014 DENIVIP Group OOO, Nikolay Morev <kolia@denivip.ru>
 https://github.com/denivip/ios-vast-player
 
 Permission is hereby granted, free of charge, to any person obtaining
